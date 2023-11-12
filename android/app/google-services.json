@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "920784971074",
+    "project_id": "words-app-3",
+    "storage_bucket": "words-app-3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920784971074:android:9da017e55be3af89cfd4db",
+        "android_client_info": {
+          "package_name": "com.example.words_app_3"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJjo3cBDsY5CobX1c20_xQgqXMOHLwN0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
