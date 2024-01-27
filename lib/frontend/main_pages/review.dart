@@ -6,8 +6,8 @@ class ReviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
-      child: Center(
+      padding: const EdgeInsets.all(20),
+      child: const Center(
         child: Text('Welcome to the ReviewScreen!'),
       )
     );

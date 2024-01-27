@@ -1,17 +1,23 @@
-import 'dart:convert';
+// Tento soubor
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'dart:convert';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:words_app_3/backend/auth.dart';
+// import 'package:words_app_3/backend/data.dart';
+// import 'package:words_app_3/backend/models.dart';
+
+// Import knihoven
+// Základní knihovna pro Flutter
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/auth.dart';
-import 'package:words_app_3/backend/data.dart';
-import 'package:words_app_3/backend/models.dart';
-import 'package:words_app_3/frontend/drawer/drawer.dart';
-import 'package:words_app_3/frontend/overview/overview.dart';
-import 'package:words_app_3/frontend/profile/profile.dart';
-import 'package:words_app_3/frontend/review/review.dart';
+
+// Import widgetu Drawer (hamburgerové menu)
+import 'package:words_app_3/frontend/shared/drawer.dart';
+import 'package:words_app_3/frontend/main_pages/overview.dart';
+import 'package:words_app_3/frontend/main_pages/profile.dart';
+import 'package:words_app_3/frontend/main_pages/review.dart';
 
 class MainScreen extends StatefulWidget {
-  MainScreen({super.key});
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -31,12 +37,12 @@ class _MainScreenState extends State<MainScreen> {
       drawer: MainScreenDrawer(updateCurrentCourseId),
       // Nadpis
       appBar: AppBar(
-        title: Text('HomeScreen'),
+        title: const Text('WordsApp 3'),
       ),
       // Stránky
       body: [
         // Domovská stránka pro zobrazení kurzu
-        OverviewScreen(currentCourseId),
+        OverviewScreen(updateCurrentCourseId, currentCourseId),
         const ReviewScreen(),
         const ProfileScreen()
       ][currentPageIndex],

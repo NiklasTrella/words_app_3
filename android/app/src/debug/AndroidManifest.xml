@@ -4,4 +4,9 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Added after errors occured -->
+    <!-- <android:usesCleartextTraffic="true"> -->
+    <!-- Added after errors occured -->
+    <!-- <android:networkSecurityConfig="/network_security_config"> -->
 </manifest>

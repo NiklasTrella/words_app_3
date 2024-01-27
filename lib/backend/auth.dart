@@ -1,8 +1,9 @@
 // Import Firebase Auth
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 // Třída s metodami pro přihlašování
 // https://firebase.google.com/docs/auth/flutter/start
@@ -21,15 +22,19 @@ class AuthService {
       }
     });
 
-  final user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
+  final FirebaseAuth instance = FirebaseAuth.instance;
 
   // Připojení k Firebase
   final auth = FirebaseAuth.instance;
 
   // Vytvoření účtu pomocí emailu a hesla
-  Future<void> signUp(email, password) async {
-    auth.createUserWithEmailAndPassword(email: email, password: password);
+  Future<String> signUp(email, password) async {
+    UserCredential usercredential = await auth.createUserWithEmailAndPassword(email: email, password: password);
     print('A new user was created!');
+
+    String userId = usercredential.user?.uid ?? "";
+    return userId;
   }
   
   // Přihlášení pomocí emailu a hesla

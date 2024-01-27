@@ -1,11 +1,10 @@
 // Import ostatních stránek
-import 'package:words_app_3/frontend/create/create_set.dart';
-import 'package:words_app_3/frontend/main_screen.dart';
-import 'package:words_app_3/frontend/create/create_course.dart';
-import 'package:words_app_3/frontend/start.dart';
+import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/frontend/editors/course_editor.dart';
+import 'package:words_app_3/frontend/main/a_decision.dart';
 
 // Odkazy na "cesty"
 var appRoutes = {
-  '/': (context) => const StartScreen(),
-  '/create_course': (context) => CreateCourseScreen(),
+  '/': (context) => const DecisionScreen(),
+  '/create_course': (context) => CourseEditorScreen(CourseModel(null, null, null), null),
 };
