@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/word_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/word_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class Flashcards extends StatefulWidget {
   final SetModel set;
@@ -44,7 +44,7 @@ class _FlashcardsState extends State<Flashcards> {
   }
 
   Future<void> loadData() async {
-    List<WordModel> wordsList = await WordDataService().getWordsListFuture(widget.set);
+    List<WordModel> wordsList = await WordDataService().getWordsList(widget.set);
 
     setState(() {
       words = wordsList;

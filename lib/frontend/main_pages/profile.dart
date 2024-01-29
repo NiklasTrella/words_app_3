@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:words_app_3/backend/data/system_data.dart';
-import 'package:words_app_3/backend/data/user_data.dart';
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
 import 'package:words_app_3/frontend/editors/password_editor.dart';
 import 'package:words_app_3/frontend/editors/profile_editor.dart';
 
@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const Divider(),
           const SizedBox(height: 10),
           FutureBuilder(
-            future: UserDataService().getUserData(),
+            future: UserDataService().getCurrentUserData(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // If the Future is still running, display a loading indicator

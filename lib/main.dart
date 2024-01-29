@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 // Soubor, který obsahuje "routes"
-import 'package:words_app_3/backend/routes.dart';
+import 'package:words_app_3/backend/system/routes.dart';
 
 // Soubor, který obsahuje nastavení definovaná Firebase
 import 'package:words_app_3/firebase_options.dart';

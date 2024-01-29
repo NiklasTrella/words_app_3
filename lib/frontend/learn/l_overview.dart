@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/word_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/word_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class Overview extends StatelessWidget {
   final SetModel set;
@@ -13,7 +13,7 @@ class Overview extends StatelessWidget {
         title: const Text("Overview"),
       ),
       body: OverviewWordList(set),
-    );;
+    );
   }
 }
 
@@ -73,7 +73,7 @@ class _OverviewWordListState extends State<OverviewWordList> {
   }
 
   Future<void> loadData() async {
-    List<WordModel> wordsList = await WordDataService().getWordsListFuture(widget.set);
+    List<WordModel> wordsList = await WordDataService().getWordsList(widget.set);
 
     setState(() {
       words = wordsList;

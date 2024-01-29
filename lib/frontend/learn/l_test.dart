@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/word_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/course_data.dart';
+import 'package:words_app_3/backend/data/main_database/word_data.dart';
+import 'package:words_app_3/backend/data/users_database/progress_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 import 'package:words_app_3/frontend/learn/test_results.dart';
 
 class Test extends StatefulWidget {
@@ -55,6 +57,7 @@ class _TestState extends State<Test> {
                   currentWordIndex++;
                   setState(() {});
                 } else {
+                  await saveData();
                   await Navigator.push(context, MaterialPageRoute(
                     builder: (context) => TestResults(words, answers)
                   ));
@@ -70,10 +73,25 @@ class _TestState extends State<Test> {
   }
 
   Future<void> loadData() async {
-    List<WordModel> wordsList = await WordDataService().getWordsListFuture(widget.set);
+    List<WordModel> wordsList = await WordDataService().getWordsList(widget.set);
 
     setState(() {
       words = wordsList;
     });
+  }
+
+  Future<void> saveData() async {
+    Map<String, int> values = {};
+    bool isAuthor = await CourseDataService().isAuthor(widget.set.courseId);
+    if(!isAuthor) {
+      for(int i = 0; i<words.length; i++) {
+        if(words[i].translation?.trim() == answers[i].trim()) {
+          values.addAll({words[i].wordId! : 1});
+        } else {
+          values.addAll({words[i].wordId! : 0});
+        }
+      }
+      ProgressDataService().updateSelfWordsProgress(values, widget.set.setId, widget.set.courseId);
+    }
   }
 }

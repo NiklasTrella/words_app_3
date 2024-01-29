@@ -9,13 +9,13 @@ import 'package:flutter/material.dart';
 
 // Import souboru, který zprostředkovává authentikaci přes
 // Firebase
-import 'package:words_app_3/backend/auth.dart';
+import 'package:words_app_3/backend/system/auth.dart';
 
 // Odkaz na stránku "MainScreen"
 import 'main_screen.dart';
 
 // Odkaz na stránku "AuthScreen"
-import 'authentication.dart';
+import '../authentication/authentication.dart';
 
 // První stránka
 class DecisionScreen extends StatelessWidget {

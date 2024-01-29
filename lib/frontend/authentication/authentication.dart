@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/auth.dart';
-import 'package:words_app_3/frontend/main/forgot_password.dart';
-import 'package:words_app_3/frontend/main/sign_up.dart';
+import 'package:words_app_3/backend/system/auth.dart';
+import 'package:words_app_3/frontend/authentication/forgot_password.dart';
+import 'package:words_app_3/frontend/authentication/sign_up.dart';
 
 // Přihlašování
 class AuthScreen extends StatefulWidget {

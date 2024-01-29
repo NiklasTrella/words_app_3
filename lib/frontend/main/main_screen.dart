@@ -1,20 +1,13 @@
-// Tento soubor
-
-// import 'dart:convert';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:words_app_3/backend/auth.dart';
-// import 'package:words_app_3/backend/data.dart';
-// import 'package:words_app_3/backend/models.dart';
-
 // Import knihoven
 // Základní knihovna pro Flutter
 import 'package:flutter/material.dart';
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
 
 // Import widgetu Drawer (hamburgerové menu)
-import 'package:words_app_3/frontend/shared/drawer.dart';
-import 'package:words_app_3/frontend/main_pages/overview.dart';
+import 'package:words_app_3/frontend/drawer/drawer.dart';
+import 'package:words_app_3/frontend/main_pages/overview/overview.dart';
 import 'package:words_app_3/frontend/main_pages/profile.dart';
-import 'package:words_app_3/frontend/main_pages/review.dart';
+import 'package:words_app_3/frontend/main_pages/student_manager/student_manager.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -28,6 +21,16 @@ class _MainScreenState extends State<MainScreen> {
   int currentPageIndex = 0;
   // Aktuální kurz
   String? currentCourseId;
+  bool isAuthor = false;
+  bool isTeacher = false;
+
+  @override
+  void initState() {
+    UserDataService().isTeacher().then((value) => setState(() {
+      isTeacher = value;
+    },));
+    super.initState();
+  }
 
   // Hlavní stránka
   @override
@@ -42,23 +45,29 @@ class _MainScreenState extends State<MainScreen> {
       // Stránky
       body: [
         // Domovská stránka pro zobrazení kurzu
-        OverviewScreen(updateCurrentCourseId, currentCourseId),
-        const ReviewScreen(),
+        OverviewScreen(currentCourseId, isAuthor),
+        Visibility(
+          visible: isTeacher,
+          child: StudentManagerScreen(currentCourseId)
+        ),
         const ProfileScreen()
       ][currentPageIndex],
       // Navigační menu dole
       bottomNavigationBar: NavigationBar(
         // Tlačítka na spodní navigačním panelu
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Icons.home),
             label: 'Overview',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.collections),
-            label: 'Review',
+          Visibility(
+            visible: isTeacher,
+            child: const NavigationDestination(
+              icon: Icon(Icons.groups),
+              label: 'Students',
+            ),
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
@@ -74,10 +83,11 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void updateCurrentCourseId(String value) {
+  void updateCurrentCourseId(String value, bool authorChange) {
     print(value);
     setState(() {
       currentCourseId = value;
+      isAuthor = authorChange;
     });
     return;
   }

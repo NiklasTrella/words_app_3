@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/user_data.dart';
+import 'package:words_app_3/backend/system/auth.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   ForgotPasswordPage({super.key});
@@ -33,7 +33,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             const SizedBox(height: 8.0),
             OutlinedButton(
               onPressed: () async {
-                UserDataService().resetPassword(_emailController.text).then(
+                AuthService().resetPassword(_emailController.text).then(
                   (errorMessage) => showDialog(
                     context: context,
                     builder: (context) {

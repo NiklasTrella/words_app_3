@@ -13,7 +13,8 @@ class UserModel {
     return <String, dynamic> {
       "firstName": firstName,
       "lastName": lastName,
-      "isTeacher": isTeacher
+      "isTeacher": isTeacher,
+      "email": email
     };
   }
 }
@@ -23,19 +24,15 @@ class CourseModel {
   String? userId;
   String? courseId;
   String? title;
+  bool? isAuthor;
 
   CourseModel(this.userId, this.courseId, this.title);
+  CourseModel.withAutorship(this.userId, this.courseId, this.title, this.isAuthor);
 
   Map<String, dynamic> courseToMap() {
     return <String, dynamic> {
       "userId": userId,
       "title": title
-    };
-  }
-
-  Map<String, dynamic> courseProgressToMap() {
-    return <String, dynamic> {
-      "courseId": courseId
     };
   }
 }
@@ -67,11 +64,11 @@ class WordModel {
   String? wordId;
   String? original;
   String? translation;
-  int? memory;
+  int memory = 0;
 
   WordModel(this.wordId, this.original, this.translation);
 
-  WordModel.progressConstructor(this.wordId, this.original, this.translation, this.memory);
+  WordModel.withMemory(this.wordId, this.original, this.translation, this.memory);
 
   Map<String, dynamic> wordToMap() {
     return <String, dynamic> {
@@ -84,9 +81,9 @@ class WordModel {
     memory = newMemory;
   }
 
-  // Map<String, dynamic> wordProgressToMap() {
-  //   return <String, dynamic> {
-  //     "wordId": wordId
-  //   };
-  // }
+  Map<String, dynamic> wordProgressToMap() {
+    return <String, dynamic> {
+      "memory": memory
+    };
+  }
 }

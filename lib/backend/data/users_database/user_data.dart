@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:words_app_3/backend/auth.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/system/auth.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class UserDataService {
   // Odkaz na databázi
@@ -12,9 +12,9 @@ class UserDataService {
   CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
 
   // Zápis uživatele do databáze "users"
-  Future<UserModel> addUser(String userId, String firstName, String lastName, bool isTeacher) async {
+  Future<UserModel> addUser(String userId, String firstName, String lastName, bool isTeacher, email) async {
 
-    UserModel user = UserModel(userId, firstName, lastName, isTeacher);
+    UserModel user = UserModel.withEmail(userId, firstName, lastName, isTeacher, email);
     DocumentReference document = usersCollection.doc(userId);
 
     await document.set(user.userToMap());
@@ -35,23 +35,6 @@ class UserDataService {
       "lastName": lastName
     });
   }
-
-  Future<void> updatePassword(String newPassword) async {
-    User? user = AuthService().user;
-    user?.updatePassword(newPassword);
-    print("Password updated!");
-  }
-
-  Future<String?> resetPassword(String email) async {
-    FirebaseAuth instance = AuthService().instance;
-    try {
-      await instance.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException catch (e) {
-      print(e);
-      return e.message.toString();
-    }
-    return null;
-  }
   
   Future<void> becomeTeacher() async {
     User? user = AuthService().user;
@@ -69,7 +52,7 @@ class UserDataService {
     return data["isTeacher"];
   }
 
-  Future<UserModel> getUserData() async {
+  Future<UserModel> getCurrentUserData() async {
 
     User? user = AuthService().user;
     

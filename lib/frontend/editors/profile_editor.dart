@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/user_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class ProfileEditor extends StatefulWidget {
   const ProfileEditor({super.key});
@@ -56,7 +56,7 @@ class _ProfileEditorState extends State<ProfileEditor> {
   }
 
   Future<void> loadInitialData() async {
-    UserModel userData = await UserDataService().getUserData();
+    UserModel userData = await UserDataService().getCurrentUserData();
     setState(() {
       firstNameController.text = userData.firstName ?? "";
       lastNameController.text = userData.lastName ?? "";

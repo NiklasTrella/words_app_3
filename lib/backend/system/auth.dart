@@ -48,4 +48,23 @@ class AuthService {
     await auth.signOut();
     print('The Function signOut was called.');
   }
+
+  String? getUserId() {
+    return user?.uid;
+  }
+
+  Future<void> updatePassword(String newPassword) async {
+    user?.updatePassword(newPassword);
+    print("Password updated!");
+  }
+
+  Future<String?> resetPassword(String email) async {
+    try {
+      await instance.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      return e.message.toString();
+    }
+    return null;
+  }
 }

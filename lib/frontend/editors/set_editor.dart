@@ -1,7 +1,7 @@
 // Import knihoven
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/set_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/set_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 import 'package:words_app_3/frontend/editors/word_list_generator.dart';
 
 // Stránka SetEditor
@@ -10,10 +10,10 @@ class SetEditorScreen extends StatefulWidget {
   // Základní data setu
   final SetModel setModel;
 
-  Function? parentSetState;
+  final Function? parentSetState;
 
   // Získání základních dat setu
-  SetEditorScreen(this.setModel, this.parentSetState, {super.key});
+  const SetEditorScreen(this.setModel, this.parentSetState, {super.key});
 
   @override
   State<SetEditorScreen> createState() => _CreateSetScreenState();

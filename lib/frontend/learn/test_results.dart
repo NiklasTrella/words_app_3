@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class TestResults extends StatelessWidget {
   final List<WordModel> words;
@@ -23,7 +23,7 @@ class TestResults extends StatelessWidget {
               itemCount: words.length,
               itemBuilder: (context, index) {
                 late bool correctAnswer;
-                if(answers[index] == words[index].translation) {
+                if(answers[index].trim() == words[index].translation?.trim()) {
                   correctAnswer = true;
                 } else {
                   correctAnswer = false;

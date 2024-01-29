@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/auth.dart';
+import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/data/system_data.dart';
-import 'package:words_app_3/backend/data/user_data.dart';
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
 
 class SignUpScreen extends StatefulWidget {
   final String email;
@@ -109,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             onPressed: () async {
               AuthService().signUp(widget.email, widget.password).then((value) async {
                 print("UserId: $value");
-                await UserDataService().addUser(value, firstName.text, lastName.text, codeIsCorrect);
+                await UserDataService().addUser(value, firstName.text, lastName.text, codeIsCorrect, widget.email);
                 print("User added to the database.");
                 Navigator.pop(context);
               });

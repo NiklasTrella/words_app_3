@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:words_app_3/backend/auth.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/users_database/progress_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 // Odkazy na ostatní datové třídy
-import 'package:words_app_3/backend/data/word_data.dart';
+import 'package:words_app_3/backend/data/main_database/word_data.dart';
 
 class SetDataService {
   // Odkaz na databázi
@@ -26,11 +26,12 @@ class SetDataService {
     if(setModel.setId == null) {
       setsCollection.add(setModel.setToMap()).then((DocumentReference doc) {
         print('New set added.\tDocumentSnapshot added with ID: ${doc.id}');
-        addSetProgress(doc.id, setModel.courseId, AuthService().user?.uid);
+        ProgressDataService().addStudentsSetProgress(doc.id, setModel.courseId, null);
 
         // Zápis všech slov v setu
         for(WordModel word in words) {
           WordDataService().addWord(setModel, word);
+          ProgressDataService().addStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
         }
       });
     // Aktualizace existujícího setu
@@ -43,22 +44,6 @@ class SetDataService {
     }
     
     return setModel;
-  }
-
-  // Zápis progressu setu do databáze "setProgress",
-  Future<SetModel> addSetProgress(setId, courseId, userId) async {
-    SetModel set = SetModel(courseId, setId, null);
-    CollectionReference setsCollection = FirebaseFirestore.instance
-      .collection("users")
-      .doc(userId)
-      .collection("courseProgress")
-      .doc(courseId)
-      .collection("setProgress");
-
-    setsCollection.add(set.setProgressToMap()).then((DocumentReference doc) {
-      print('New setProgress added.\nDocumentSnapshot added with ID: ${doc.id}');
-    });
-    return set;
   }
 
   Future<void> updateWords(SetModel setModel, List<WordModel> wordsToUpdate) async {
@@ -81,7 +66,7 @@ class SetDataService {
       3. Projít ostatní slova v seznamu "words" a přidat je
     */
 
-    List<WordModel> databaseWordsList = await WordDataService().getWordsListFuture(setModel);
+    List<WordModel> databaseWordsList = await WordDataService().getWordsList(setModel);
 
     for(WordModel word in databaseWordsList) {
       // Zkontrolovat, existuje-li slovo se stejným wordId
@@ -91,6 +76,7 @@ class SetDataService {
           print("Something went wrong. A word in a database cannot have a wordId null.");
         }
         WordDataService().deleteWord(setModel, word.wordId as String);
+        ProgressDataService().deleteStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
 
       } else {
         WordModel wordToUpdate = wordsToUpdate.firstWhere((element) => element.wordId == word.wordId);
@@ -105,12 +91,13 @@ class SetDataService {
 
     for(WordModel newWord in wordsToUpdate) {
       WordDataService().addWord(setModel, newWord);
+      ProgressDataService().addStudentsWordProgress(newWord.wordId, setModel.setId, setModel.courseId, null);
     }
   }
 
   // Výpis seznamu setů z databáze "sets" v kurzu, který
   // je v databázi "courses"
-  Future<List<SetModel>> getSetsListFuture(courseId) async {
+  Future<List<SetModel>> getSetsList(courseId) async {
     List<SetModel> setsList = [];
 
     // print("Function getSetsListFuture() has started.");
@@ -188,20 +175,8 @@ class SetDataService {
       .collection('sets')
       .doc(set.setId);
     
+    ProgressDataService().deleteStudentsSetProgress(set.setId, set.courseId, null);
+    
     await setDoc.delete();
-  }
-
-  // Smazání progressu setu z databáze "setProgress",
-  Future<void> deleteSetProgress(setId, courseId, userId) async {
-    SetModel set = SetModel(courseId, setId, null);
-    DocumentReference setProgressDoc = FirebaseFirestore.instance
-      .collection("users")
-      .doc(userId)
-      .collection("courseProgress")
-      .doc(courseId)
-      .collection("setProgress")
-      .doc(setId);
-
-    await setProgressDoc.delete();
   }
 }

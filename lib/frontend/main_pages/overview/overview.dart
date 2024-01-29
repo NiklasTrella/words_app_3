@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/course_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/course_data.dart';
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 import 'package:words_app_3/frontend/editors/set_editor.dart';
-import 'package:words_app_3/frontend/shared/sets_list.dart';
+import 'package:words_app_3/frontend/main_pages/overview/sets_list.dart';
 
 // První stránka - přehled zvoleného kurzu
 class OverviewScreen extends StatefulWidget {
-  final Function updateCurrentCourseId;
   final String? courseId;
-  const OverviewScreen(this.updateCurrentCourseId, this.courseId, {super.key});
+  final bool isAuthor;
+  const OverviewScreen(this.courseId, this.isAuthor, {super.key});
 
   @override
   State<OverviewScreen> createState() => _OverviewScreenState();
 }
 
 class _OverviewScreenState extends State<OverviewScreen> {
-  late Function updateCurrentCourseId;
-  
+  bool isTeacher = false;
+
   @override
   void initState() {
-    updateCurrentCourseId = widget.updateCurrentCourseId;
+    UserDataService().isTeacher().then((value) {
+      isTeacher = value;
+    });
     super.initState();
   }
 
@@ -31,7 +34,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
         child: Column(
           children: [
             const Text(
-              "Overview Screen",
+              "Overview",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold
@@ -51,23 +54,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   // Display the data when the future completes successfully
-                  return Text(snapshot.data ?? "No data."); // .courseToMap()["title"].toString()
+                  return Text(snapshot.data ?? "No data.");
                 }
               }
             ),
-            // Text(widget.courseId != null ? await getCourseDetailsFuture().courseToMap()["title"].toString() : "Firstly choose a course."),
             // Zobrazení seznamu setů
-            SetsList(widget.courseId),
+            SetsList(widget.courseId, widget.isAuthor),
             // Tlačítko na přidání setu
-            widget.courseId != null ? ElevatedButton(
-              onPressed: () async { // formerly async
-                // Odeslání uživatele na stránku pro vytvoření nového setu
-                await Navigator.push(context, MaterialPageRoute( // formerly await
-                  builder: (context) => SetEditorScreen(SetModel(widget.courseId, null, null), null),
-                ));
-                setState(() {});
-              },
-              child: const Text("Add set"),
+            widget.courseId != null ? Visibility(
+              visible: isTeacher,
+              child: ElevatedButton(
+                onPressed: () async {
+                  // Odeslání uživatele na stránku pro vytvoření nového setu
+                  await Navigator.push(context, MaterialPageRoute( // formerly await
+                    builder: (context) => SetEditorScreen(SetModel(widget.courseId, null, null), null),
+                  ));
+                  setState(() {});
+                },
+                child: const Text("Add set"),
+              ),
             ) : Container(),
           ],
         ),

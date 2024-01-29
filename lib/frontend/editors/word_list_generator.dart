@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/word_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/word_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class WordListGenerator extends StatefulWidget {
   final Function parentUpdateFunction;
@@ -133,7 +133,7 @@ class _WordListGeneratorState extends State<WordListGenerator> {
   }
   
   Future<void> loadInitialData() async {
-    List<WordModel> wordsList = await WordDataService().getWordsListFuture(widget.setModel);
+    List<WordModel> wordsList = await WordDataService().getWordsList(widget.setModel);
 
     for(WordModel word in wordsList) {
       print("WordId: ${word.wordId}");

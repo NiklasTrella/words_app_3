@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/course_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/main_database/course_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class CourseEditorScreen extends StatefulWidget {
   final CourseModel course;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:words_app_3/backend/data/user_data.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/system/auth.dart';
 
 class PasswordEditor extends StatefulWidget {
   const PasswordEditor({super.key});
@@ -56,7 +55,7 @@ class _PasswordEditorState extends State<PasswordEditor> {
             OutlinedButton(
               onPressed: () {
                 if(firstPasswordController.text == secondPasswordController.text) {
-                  UserDataService().updatePassword(firstPasswordController.text);
+                  AuthService().updatePassword(firstPasswordController.text);
                   Navigator.pop(context);
                 }
               },

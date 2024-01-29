@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:words_app_3/backend/auth.dart';
-import 'package:words_app_3/backend/models.dart';
+import 'package:words_app_3/backend/data/users_database/progress_data.dart';
+import 'package:words_app_3/backend/system/models.dart';
 
 class WordDataService {
   // Odkaz na databázi
@@ -21,7 +21,7 @@ class WordDataService {
 
     if(word.wordId == null) {
       wordsCollection.add(word.wordToMap()).then((DocumentReference doc) {
-        addWordProgress(doc.id, setModel.setId, setModel.courseId, AuthService().user?.uid);
+        ProgressDataService().addStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
         print('New word added.\tDocumentSnapshot added with ID: ${doc.id}');
       });
     } else {
@@ -31,33 +31,9 @@ class WordDataService {
     return word;
   }
 
-  // Zápis progressu slova do databáze "wordProgress", která je součástí
-  // databáze "setProress", která je součástí databáze "courseProgress"
-  Future<WordModel> addWordProgress(wordId, setId, courseId, userId) async {
-    WordModel word = WordModel(wordId, null, null);
-    CollectionReference wordProgressCollection = FirebaseFirestore.instance
-      .collection("users")
-      .doc(userId)
-      .collection("courseProgress")
-      .doc(courseId)
-      .collection("setProgress")
-      .doc(setId)
-      .collection("wordProgress");
-    
-    Map<String, dynamic> wordProgressMap = {
-      "wordId": wordId,
-      "memory": 0
-    };
-
-    wordProgressCollection.add(wordProgressMap).then((DocumentReference doc) {
-      print('New wordProgress added\tDocumentSnapshot added with ID: ${doc.id}');
-    });
-    return word;
-  }
-
   // Výpis seznamu slov z databáze "words" v setu, který
   // je v databázi "sets"
-  Future<List<WordModel>> getWordsListFuture(SetModel setModel) async {
+  Future<List<WordModel>> getWordsList(SetModel setModel) async {
     List<WordModel> wordList = [];
 
     CollectionReference wordsCollection = coursesCollection
@@ -87,20 +63,6 @@ class WordDataService {
       .doc(wordId);
     
     await wordDoc.delete();
-    await deleteWordProgress(wordId, set.setId, set.courseId, AuthService().user?.uid);
-  }
-
-  Future<void> deleteWordProgress(wordId, setId, courseId, userId) async {
-    DocumentReference wordProgressDoc = FirebaseFirestore.instance
-      .collection("users")
-      .doc(userId)
-      .collection("courseProgress")
-      .doc(courseId)
-      .collection("setProgress")
-      .doc(setId)
-      .collection("wordProgress")
-      .doc(wordId);
-
-    await wordProgressDoc.delete();
+    await ProgressDataService().deleteStudentsWordProgress(wordId, set.setId, set.courseId, null);
   }
 }
