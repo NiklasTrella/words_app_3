@@ -13,4 +13,15 @@ class SystemDataService {
 
     return codeToCheck == correctCode;
   }
+  
+  Future<bool> checkDeleteCode(String codeToCheck) async {
+    DocumentReference deleteCodeReference = system.doc("delete_code");
+    String correctCode;
+
+    DocumentSnapshot documentSnapshot = await deleteCodeReference.get();
+    Map<String, dynamic> documentData = documentSnapshot.data() as Map<String, dynamic>;
+    correctCode = documentData["code"];
+
+    return codeToCheck == correctCode;
+  }
 }

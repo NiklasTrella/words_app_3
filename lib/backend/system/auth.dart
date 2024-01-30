@@ -4,6 +4,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
 
 // Třída s metodami pro přihlašování
 // https://firebase.google.com/docs/auth/flutter/start
@@ -66,5 +67,10 @@ class AuthService {
       return e.message.toString();
     }
     return null;
+  }
+
+  Future<void> deleteUser() async {
+    await UserDataService().deleteUserData();
+    await user?.delete();
   }
 }

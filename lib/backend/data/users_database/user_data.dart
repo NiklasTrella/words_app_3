@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:words_app_3/backend/data/main_database/course_data.dart';
+import 'package:words_app_3/backend/data/users_database/student_data.dart';
 import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
@@ -65,5 +67,18 @@ class UserDataService {
     });
 
     return userData;
+  }
+
+  Future<void> deleteUserData() async {
+    String? userId = AuthService().getUserId();
+    DocumentReference document = usersCollection.doc(userId);
+    await document.delete();
+
+    List<CourseModel> courses = [];
+    courses = await CourseDataService().getStudiedCourses();
+
+    for(CourseModel course in courses) {
+      StudentDataService().removeStudent(course.courseId!, userId!);
+    }
   }
 }

@@ -28,6 +28,8 @@ class SetDataService {
         print('New set added.\tDocumentSnapshot added with ID: ${doc.id}');
         ProgressDataService().addStudentsSetProgress(doc.id, setModel.courseId, null);
 
+        setModel.setId = doc.id;
+
         // Zápis všech slov v setu
         for(WordModel word in words) {
           WordDataService().addWord(setModel, word);
