@@ -108,19 +108,13 @@ class _WordListGeneratorState extends State<WordListGenerator> {
 
   // Funkce, která aktualizuje slovo
   void localWordUpdate(int indexToUpdate, String wordKey, String wordValue) {
-    // setState(() {
-      if(indexToUpdate >= 0 && indexToUpdate < words.length) {
-        if(wordKey == 'original') {
-          words[indexToUpdate].original = wordValue;
-        } else if(wordKey == 'translation') {
-          words[indexToUpdate].translation = wordValue;
-        } else {
-          print("Invalid wordKey");
-        }
-      } else {
-        print("Invalid index. Element not updated.");
+    if(indexToUpdate >= 0 && indexToUpdate < words.length) {
+      if(wordKey == 'original') {
+        words[indexToUpdate].original = wordValue;
+      } else if(wordKey == 'translation') {
+        words[indexToUpdate].translation = wordValue;
       }
-    // });
+    }
 
     parentUpdate();
   }
@@ -130,9 +124,6 @@ class _WordListGeneratorState extends State<WordListGenerator> {
     setState(() {  
       if(index >= 0 && index < words.length) {
         words.removeAt(index);
-        print("Deleted an element (word) at index: $index");
-      } else {
-        print("Invalid index. Element not removed.");
       }
     });
 
@@ -147,11 +138,6 @@ class _WordListGeneratorState extends State<WordListGenerator> {
   // Funkce, která načítá počáteční data  
   Future<void> loadInitialData() async {
     List<WordModel> wordsList = await WordDataService().getWordsList(widget.setModel);
-
-    for(WordModel word in wordsList) {
-      print("WordId: ${word.wordId}");
-      print("Original: ${word.original}\tTranslation: ${word.translation}\n");
-    }
 
     if(wordsList == []) {
       setState(() {

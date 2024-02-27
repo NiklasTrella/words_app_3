@@ -88,9 +88,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               codeIsCorrect = await SystemDataService().checkTeacherCode(teacherCode.text);
                               if(codeIsCorrect) {
                                 Navigator.pop(context);
-                                print("Code is correct!");
-                              } else {
-                                print("Code is not correct!");
                               }
                             }
                           },

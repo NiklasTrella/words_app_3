@@ -107,7 +107,6 @@ class _MainScreenState extends State<MainScreen> {
 
   // Následující funkce aktualizuje id aktuálního kurzu
   void updateCurrentCourseId(String value, bool authorChange) {
-    print(value);
     setState(() {
       currentCourseId = value;
       isAuthor = authorChange;

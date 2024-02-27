@@ -24,13 +24,9 @@ class WordDataService {
     if(word.wordId == null) {
       wordsCollection.add(word.wordToMap()).then((DocumentReference doc) {
         ProgressDataService().addStudentsWordProgress(doc.id, setModel.setId, setModel.courseId, null);
-        print('New word added.\tDocumentSnapshot added with ID: ${doc.id}');
       });
     } else {
       wordsCollection.doc(word.wordId).update(word.wordToMap());
-      print("A word has been updated: ${word.wordId}");
-      print("New original: ${word.original}");
-      print("New translation: ${word.translation}");
     }
     
     return word;

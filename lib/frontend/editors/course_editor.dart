@@ -52,11 +52,10 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
             ElevatedButton(
               child: widget.course.courseId == null ? const Text('Create course') : const Text('Save course'),
               onPressed: () {
-                if(titleController.text.length >= 3) {
+                if(titleController.text.isNotEmpty) {
                   CourseDataService().addCourse(titleController.text.toString(), widget.course.courseId);
                   Navigator.pop(context);
                 } else {
-                  print('Less than 3 characters!');
                 }
               },
             ),

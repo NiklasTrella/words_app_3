@@ -125,9 +125,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               if(codeIsCorrect) {
                                                 UserDataService().becomeTeacher();
                                                 Navigator.pop(context);
-                                                print("Code is correct!");
-                                              } else {
-                                                print("Code is not correct!");
                                               }
                                             }
                                           },

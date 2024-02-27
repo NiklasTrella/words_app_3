@@ -38,7 +38,6 @@ class SystemDataService {
     // Mazání progressu
     if(parentCollection == "wordProgress") {
       documentReference.delete();
-      print("A wordProgress deleted at ${documentReference.toString()}");
     } else if (parentCollection == "setProgress") {
       CollectionReference collectionReference = documentReference.collection("wordProgress");
       QuerySnapshot querySnapshot = await collectionReference.get();

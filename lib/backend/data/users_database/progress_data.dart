@@ -20,7 +20,6 @@ class ProgressDataService {
       .collection("courseProgress");
 
     courseProgress.doc(courseId).set(Map<String, dynamic>()).then((value) {
-      print("Successfully added courseProgress.");
     });
 
     return course;
@@ -37,7 +36,6 @@ class ProgressDataService {
       .collection("setProgress");
 
     setProgress.doc(setId).set(Map<String, dynamic>()).then((value) {
-      print("Successfully added setProgress.");
     });
 
     return set;
@@ -54,12 +52,8 @@ class ProgressDataService {
       .collection("setProgress")
       .doc(setId)
       .collection("wordProgress");
-    
-    print("AddWordProgress wordId: $wordId");
 
-    wordProgress.doc(wordId).set(word.wordProgressToMap()).then((value) {
-      print('Successfully added wordProgress');
-    });
+    wordProgress.doc(wordId).set(word.wordProgressToMap());
     
     return word;
   }
@@ -141,7 +135,6 @@ class ProgressDataService {
       .doc(wordId);
 
     SystemDataService().deleteDocumentAndContents(wordProgressDoc, "wordProgress");
-    print("Deleted a student progress doc of a student with id: $userId");
     
     return word;
   }
@@ -166,7 +159,6 @@ class ProgressDataService {
   Future<void> deleteStudentsWordProgress(String? wordId, String? setId, String? courseId, List<UserModel>? students) async {
     students ??= await CourseDataService().getStudentsList(courseId);
     for(UserModel student in students) {
-      print("Student progress deleted: ${student.userId}");
       deleteWordProgress(wordId, setId, courseId, student.userId);
     }
   }
@@ -214,7 +206,6 @@ class ProgressDataService {
     await wordProgressCollection.get().then((QuerySnapshot querySnapshot) {
       for(QueryDocumentSnapshot doc in querySnapshot.docs) {
         words.add(WordModel.withMemory(doc.id, null, null, doc["memory1"] ?? 0, doc["memory2"] ?? 0));
-        print("Doc.id: ${doc.id}\tmemory1:${doc['memory1'] ?? 0}, memory2:${doc['memory2'] ?? 0}");
       }
     });
 

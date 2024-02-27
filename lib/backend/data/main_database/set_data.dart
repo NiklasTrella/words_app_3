@@ -50,7 +50,6 @@ class SetDataService {
   // Aktualizace slov
   Future<void> updateWords(SetModel setModel, List<WordModel> wordsToUpdate) async {
     if(setModel.setId == null) {
-      print("SetId is null. That's wrong.");
       return;
     }
 

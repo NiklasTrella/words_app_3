@@ -16,15 +16,12 @@ class StudentDataService {
 
   // Získání dat určitého uživatele z databáze "users"
   Future<UserModel> getUserData(String userId) async {
-    print("GetUserData() function started");
-    print("UserId: $userId");
     DocumentReference ref = usersCollection
       .doc(userId);
     DocumentSnapshot snap = await ref.get();
     Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
 
     UserModel userData = UserModel.withEmail(userId, data["firstName"], data["lastName"], data["isTeacher"], data["email"]);
-    print("User ${userData.firstName} ${userData.lastName}");
     return userData;
   }
 
@@ -52,7 +49,6 @@ class StudentDataService {
       for(var doc in querySnapshot.docs) {
         if(!listOfStudentIds.contains(doc.id)) {
           listOfNonStudentIds.add(doc.id);
-          print(listOfNonStudentIds);
         }
       }
     });

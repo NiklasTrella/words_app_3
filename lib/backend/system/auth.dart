@@ -21,7 +21,6 @@ class AuthService {
   // Vytvoření účtu pomocí emailu a hesla
   Future<String> signUp(email, password) async {
     UserCredential usercredential = await auth.createUserWithEmailAndPassword(email: email, password: password);
-    print('A new user was created!');
 
     // Ověřovací email "reset password"
     resetPassword(email);
@@ -32,13 +31,11 @@ class AuthService {
   // Přihlášení pomocí emailu a hesla
   Future<void> logIn(email, password) async {
     auth.signInWithEmailAndPassword(email: email, password: password);
-    print('The user logged in!');
   }
 
   // Odhlášení
   Future<void> signOut() async {
     await auth.signOut();
-    print('The Function signOut was called.');
   }
 
   // Získání id právě přihlášeného uživatele
@@ -49,7 +46,6 @@ class AuthService {
   // Změna hesla
   Future<void> updatePassword(String newPassword) async {
     user?.updatePassword(newPassword);
-    print("Password updated!");
   }
 
   // Resetování hesla
@@ -57,7 +53,6 @@ class AuthService {
     try {
       await instance.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      print(e);
       return e.message.toString();
     }
     return null;

@@ -115,7 +115,6 @@ class CourseDataService {
 
   // Získání seznamu studentů
   Future<List<UserModel>> getStudentsList(String? courseId) async {
-    print("Get students list function started");
     List<UserModel> listOfStudents = [];
     CollectionReference studentsCollection = FirebaseFirestore.instance
       .collection("courses")

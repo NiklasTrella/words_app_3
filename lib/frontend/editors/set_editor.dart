@@ -119,6 +119,5 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
   // Funkce, která umožňuje generátoru seznamu slov (WordListGenerator) ukládat svá data do tohoto Widgetu
   void parentUpdateFunction(List<WordModel> wordsToUpdate) {
     words = wordsToUpdate;
-    print(words);
   }
 }
