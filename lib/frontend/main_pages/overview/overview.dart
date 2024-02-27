@@ -1,7 +1,11 @@
+// Tento soubor obsahuje hlavní stránku, kde se zobrazí název a sety zvoleného kurzu
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/data/main_database/course_data.dart';
 import 'package:words_app_3/backend/data/users_database/user_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
+
 import 'package:words_app_3/frontend/editors/set_editor.dart';
 import 'package:words_app_3/frontend/main_pages/overview/sets_list.dart';
 
@@ -18,6 +22,7 @@ class OverviewScreen extends StatefulWidget {
 class _OverviewScreenState extends State<OverviewScreen> {
   bool isTeacher = false;
 
+  // Počáteční nastavení
   @override
   void initState() {
     UserDataService().isTeacher().then((value) {
@@ -33,6 +38,8 @@ class _OverviewScreenState extends State<OverviewScreen> {
       child: Center(
         child: Column(
           children: [
+
+            // Nadpis
             const Text(
               "Overview",
               style: TextStyle(
@@ -43,30 +50,38 @@ class _OverviewScreenState extends State<OverviewScreen> {
             const SizedBox(height: 10),
             const Divider(),
             const SizedBox(height: 10),
+
+            // FutureBuilder čeká na data → zobrazení
             FutureBuilder<String>(
               future: CourseDataService().getCourseTitleFuture(widget.courseId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  // Display a loading indicator while the future is in progress
+                  
+                  // Načítání
                   return const CircularProgressIndicator();
                 } else if (snapshot.hasError) {
-                  // Display an error message if the future fails
+                  
+                  // Chybová hláška v případě erroru
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  // Display the data when the future completes successfully
+
+                  // Zobrazení dat
                   return Text(snapshot.data ?? "No data.");
                 }
               }
             ),
-            // Zobrazení seznamu setů
+
+            // Seznam setů
             SetsList(widget.courseId, widget.isAuthor),
-            // Tlačítko na přidání setu
+            
+            // Tlačítko na přidání setu (zobrazí se pouze učiteli)
             widget.courseId != null ? Visibility(
               visible: isTeacher,
               child: ElevatedButton(
                 onPressed: () async {
+                  
                   // Odeslání uživatele na stránku pro vytvoření nového setu
-                  await Navigator.push(context, MaterialPageRoute( // formerly await
+                  await Navigator.push(context, MaterialPageRoute(
                     builder: (context) => SetEditorScreen(SetModel(widget.courseId, null, null), null),
                   ));
                   setState(() {});

@@ -1,18 +1,14 @@
-// Import knihoven
+// Na této stránce může uživatel měnit data setu
+
 import 'package:flutter/material.dart';
 import 'package:words_app_3/backend/data/main_database/set_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
 import 'package:words_app_3/frontend/editors/word_list_generator.dart';
 
-// Stránka SetEditor
+// Editor setu
 class SetEditorScreen extends StatefulWidget {
-
-  // Základní data setu
   final SetModel setModel;
-
   final Function? parentSetState;
-
-  // Získání základních dat setu
   const SetEditorScreen(this.setModel, this.parentSetState, {super.key});
 
   @override
@@ -20,16 +16,13 @@ class SetEditorScreen extends StatefulWidget {
 }
 
 class _CreateSetScreenState extends State<SetEditorScreen> {
-
-  // Create a controller for the title
   TextEditingController titleController = TextEditingController();
-
-  // Create list of WordModels
   List<WordModel> words = [];
 
-  // Initialize the title controller
   @override
   void initState() {
+
+    // Nastavení ovladače názvu setu
     if(widget.setModel.title != null) {
       titleController.text = widget.setModel.title as String;
     } else {
@@ -50,6 +43,8 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+
+              // Textové pole na název setu
               TextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -58,8 +53,12 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
                 controller: titleController,
               ),
               const SizedBox(height: 10),
+
+              // Seznam slov
               WordListGenerator(widget.setModel, parentUpdateFunction),
               const SizedBox(height: 10),
+
+              // Tlačítko na uložení setu
               ElevatedButton(
                 child: widget.setModel.setId == null ? const Text('Create set') : const Text('Save set'),
                 onPressed: () {
@@ -69,12 +68,16 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
                   );
                 },
               ),
+
+              // Tlačítko na smazání setu (zobrazí se pouze jeho tvůrci)
               Visibility(
                 visible: widget.setModel.setId != null,
                 child: TextButton.icon(
                   label: const Text("Delete set"),
                   onPressed: () {
                     String? setTitle = widget.setModel.title;
+
+                    // Potvrzení smazání setu
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -87,15 +90,14 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
                               onPressed: () {
                                 SetDataService().deleteSet(widget.setModel);
                                 widget.parentSetState!();
-                                popContext();
-                                Navigator.of(context).pop();
+                                Navigator.pop(context);
                               },
                               label: const Text("Yes."),
                             ),
                             TextButton.icon(
                               icon: const Icon(Icons.close),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.pop(context);
                               },
                               label: const Text("No.")
                             )
@@ -114,12 +116,8 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
     );
   }
 
-  void popContext() {
-    Navigator.of(context).pop();
-  }
-
+  // Funkce, která umožňuje generátoru seznamu slov (WordListGenerator) ukládat svá data do tohoto Widgetu
   void parentUpdateFunction(List<WordModel> wordsToUpdate) {
-    print("ParentUpdateFunction has started.");
     words = wordsToUpdate;
     print(words);
   }

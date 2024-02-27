@@ -1,4 +1,8 @@
+// Tento soubor obsahuje funkce pro manipulaci s daty kurzů v databázi Firebase
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:words_app_3/backend/data/system_data.dart';
 import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/data/users_database/progress_data.dart';
 import 'package:words_app_3/backend/data/users_database/student_data.dart';
@@ -45,7 +49,7 @@ class CourseDataService {
     return coursesList;
   }
 
-  // Výpis seznamu studovaných kurzů
+  // Výpis seznamu studovaných kurzů z databáze "courses"
   Future<List<CourseModel>> getStudiedCourses() async {
     List<CourseModel> coursesList = [];
     String? userId = AuthService().getUserId();
@@ -106,8 +110,7 @@ class CourseDataService {
       .doc(courseId);
     
     ProgressDataService().deleteStudentsCourseProgress(courseId, null);
-    
-    await courseDoc.delete();
+    SystemDataService().deleteDocumentAndContents(courseDoc, "courses");
   }
 
   // Získání seznamu studentů
@@ -131,22 +134,21 @@ class CourseDataService {
       listOfStudents.add(studentData);
     }
 
-    print("Get students list function ended");
-    print("Length of listOfStudents: ${listOfStudents.length}");
     return listOfStudents;
   }
 
+  // Přidání studentů
   Future<void> addStudents(String? courseId, List<UserModel> nonStudentsToAdd) async {
     CollectionReference studentsCollection = coursesCollection
       .doc(courseId)
       .collection("students");
     for(UserModel nonStudent in nonStudentsToAdd) {
       DocumentReference studentDoc = studentsCollection.doc(nonStudent.userId);
-      // Celký kontruktor Mapy - jinak error kvůli LinkedMap - neočekávaný typ
       await studentDoc.set(Map<String, dynamic>());
     }
   }
 
+  // Kontrola, je-li uživatel autorem kurzu
   Future<bool> isAuthor(String? courseId) async {
     DocumentReference docRef = coursesCollection
       .doc(courseId);

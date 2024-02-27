@@ -1,28 +1,20 @@
-// Tento soubor zkontroluje, je-li uživatel přihlášen.
-// V opačném případě jej odešlě na stránku
-// "Authentication". Po přihlášení uživatele odešle na
-// stránku "MainScreen".
+// Tento soubor zkontroluje, je-li uživatel přihlášen. Po přihlášení uživatele odešle na stránku "MainScreen". V opačném případě jej odešlě na stránku "Authentication".
 
-// Import knihoven
-// Import základní knihovny pro Flutter
 import 'package:flutter/material.dart';
 
-// Import souboru, který zprostředkovává authentikaci přes
-// Firebase
 import 'package:words_app_3/backend/system/auth.dart';
 
-// Odkaz na stránku "MainScreen"
-import 'main_screen.dart';
+import 'package:words_app_3/frontend/main/main_screen.dart';
+import 'package:words_app_3/frontend/authentication/authentication.dart';
 
-// Odkaz na stránku "AuthScreen"
-import '../authentication/authentication.dart';
-
-// První stránka
+// První stránka, na které proběhne rozhodnutí a odeslání uživatele na další stránku
 class DecisionScreen extends StatelessWidget {
   const DecisionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    // Následující stream ("proud") kontroluje, je-li aktuálně přihlášen nějaký uživatel
     return StreamBuilder(
       stream: AuthService().userStream,
       builder: (context, snapshot) {
@@ -44,14 +36,12 @@ class DecisionScreen extends StatelessWidget {
             child: Text('Error.')
           );
         
-        // Jestliže se přihlášení podařilo
+        // Jestliže se přihlášení podařilo → hlavní stránka
         } else if (snapshot.hasData) {
-          // print("User sent to MainScreen.");
           return const MainScreen();
         
-        // Není-li uživatel přihlášen
+        // Není-li uživatel přihlášen → stránka autentizace
         } else {
-          // print("User sent to AuthScreen.");
           return AuthScreen();
         }
       },

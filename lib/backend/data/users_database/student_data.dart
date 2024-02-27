@@ -1,8 +1,12 @@
+// Tento soubor obsahuje funkce pro manipulaci s daty studentů jednotlivých kurzů v databázi Firebase.
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
 class StudentDataService {
+
   // Odkaz na databázi
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -10,6 +14,7 @@ class StudentDataService {
   CollectionReference coursesCollection = FirebaseFirestore.instance.collection("courses");
   CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
 
+  // Získání dat určitého uživatele z databáze "users"
   Future<UserModel> getUserData(String userId) async {
     print("GetUserData() function started");
     print("UserId: $userId");
@@ -23,14 +28,13 @@ class StudentDataService {
     return userData;
   }
 
+  // Získání seznamu uživatelů, kteří nejsou studenty kurzu
   Future<List<UserModel>> getAllNonStudents(String? courseId) async {
-    // Odkaz na kurz
     CollectionReference studentsCollection = FirebaseFirestore.instance
       .collection("courses")
       .doc(courseId)
       .collection("students");
     
-    // Seznam id studentů
     List<dynamic> listOfStudentIds = [];
     
     await studentsCollection.get().then((QuerySnapshot querySnapshot) {
@@ -41,6 +45,7 @@ class StudentDataService {
 
     // Seznam uživatelů, kteří nejsou studenty kurzu
     List<String> listOfNonStudentIds = [];
+
     // Získání všech uživatelů
     await usersCollection.get().then((QuerySnapshot querySnapshot) {
       // Není-li uživatel studentem kurzu → přidání do seznamu
@@ -63,6 +68,7 @@ class StudentDataService {
     return listOfNonStudents;
   }
 
+  // Odstranění studenta z kurzu
   Future<void> removeStudent(String courseId, String userId) async {
     DocumentReference userToDelete = coursesCollection
       .doc(courseId)

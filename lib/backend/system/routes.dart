@@ -1,5 +1,7 @@
-// Import ostatních stránek
+// Tento soubor obsahuje "cesty", na které lze odkazovat.
+
 import 'package:words_app_3/backend/system/models.dart';
+
 import 'package:words_app_3/frontend/editors/course_editor.dart';
 import 'package:words_app_3/frontend/main/a_decision.dart';
 

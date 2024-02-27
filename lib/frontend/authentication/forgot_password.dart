@@ -1,8 +1,12 @@
+// Na této stránce probíhá resetování zapomenutého hesla
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/system/auth.dart';
 
+// Stránka pro obnovu hesla
 class ForgotPasswordPage extends StatefulWidget {
-  ForgotPasswordPage({super.key});
+  const ForgotPasswordPage({super.key});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -10,12 +14,6 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   TextEditingController _emailController = TextEditingController(text: "");
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +25,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         margin: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            const Text("Enter your email so we can send you a link to reset your password."),
+
+            // EMail
             TextField(
               controller: _emailController,
             ),
             const SizedBox(height: 8.0),
+
+            // Tlačítko → potvrzení
             OutlinedButton(
               onPressed: () async {
                 AuthService().resetPassword(_emailController.text).then(

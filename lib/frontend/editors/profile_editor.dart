@@ -1,7 +1,11 @@
+// Na této stránce může uživatel změnit své osobní údaje
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/data/users_database/user_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
+// Editor profilu
 class ProfileEditor extends StatefulWidget {
   const ProfileEditor({super.key});
 
@@ -29,12 +33,16 @@ class _ProfileEditorState extends State<ProfileEditor> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+
+            // Textové pole - jméno
             TextField(
               controller: firstNameController,
               decoration: const InputDecoration(
                 label: Text("First name")
               ),
             ),
+
+            // Textové pole - příjmení
             TextField(
               controller: lastNameController,
               decoration: const InputDecoration(
@@ -42,6 +50,8 @@ class _ProfileEditorState extends State<ProfileEditor> {
               ),
             ),
             const SizedBox(height: 8.0),
+
+            // Potvrzení aktualizace jména
             OutlinedButton(
               onPressed: () {
                 UserDataService().updateUserName(firstNameController.text, lastNameController.text);

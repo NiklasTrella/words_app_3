@@ -1,9 +1,14 @@
+// Na této stránce probíhá přihlašování
+
 import 'package:flutter/material.dart';
+
+import 'package:words_app_3/backend/data/users_database/user_data.dart';
 import 'package:words_app_3/backend/system/auth.dart';
+
 import 'package:words_app_3/frontend/authentication/forgot_password.dart';
 import 'package:words_app_3/frontend/authentication/sign_up.dart';
 
-// Přihlašování
+// Přihlašovací stránka
 class AuthScreen extends StatefulWidget {
   AuthScreen({super.key});
 
@@ -13,7 +18,6 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
 
   bool _obscureText = true;
@@ -30,6 +34,7 @@ class _AuthScreenState extends State<AuthScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+
             // Email
             TextFormField(
               controller: emailController,
@@ -38,6 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 hintText: 'username@arcig.cz'
               ),
             ),
+            
             // Heslo
             TextFormField(
               controller: passwordController,
@@ -52,6 +58,8 @@ class _AuthScreenState extends State<AuthScreen> {
               children: [
                 Row(
                   children: [
+                    
+                    // Zaškrtávací políčko na zobrazení hesla
                     Checkbox(
                       value: !_obscureText,
                       onChanged: (value) {
@@ -71,25 +79,29 @@ class _AuthScreenState extends State<AuthScreen> {
                 )
               ],
             ),
+
             // Tlačítko na přihlášení
             ElevatedButton(
               child: const Text('Login'),
-              onPressed: () {
-                if (emailController.text.isNotEmpty && passwordController.text.length >= 6) {
-                  // Former process
+              onPressed: () async {
+                if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
                   AuthService().logIn(emailController.text, passwordController.text);
                 }
               },
             ),
+
+            // Tlačítko na registraci
             TextButton(
               child: const Text('Signup'),
-              onPressed: () {
-                if (emailController.text.isNotEmpty && passwordController.text.length >= 6) {
-                  // Send user to the onboarding screen
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => SignUpScreen(emailController.text, passwordController.text)
+              onPressed: () async {
+                bool userAlreadyExists = await UserDataService().checkUserExistence(emailController.text);
+                if(!userAlreadyExists) {
+
+                  // Odeslání uživatele na registrační stránku
+                  await Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => SignUpScreen()
                   ));
-                  // AuthService().signUp(emailController.text, passwordController.text);
+                  AuthService().signOut();
                 }
               },
             )

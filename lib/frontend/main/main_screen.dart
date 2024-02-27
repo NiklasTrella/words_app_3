@@ -1,9 +1,8 @@
-// Import knihoven
-// Základní knihovna pro Flutter
+// Toto je hlavní stránka, která se uživateli zobrazí, je-li přihlášen
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/data/users_database/user_data.dart';
 
-// Import widgetu Drawer (hamburgerové menu)
 import 'package:words_app_3/frontend/drawer/drawer.dart';
 import 'package:words_app_3/frontend/main_pages/overview/overview.dart';
 import 'package:words_app_3/frontend/main_pages/profile.dart';
@@ -19,16 +18,24 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   // Aktuální stránka
   int currentPageIndex = 0;
-  // Aktuální kurz
+
+  // Id aktuálního kurzu
   String? currentCourseId;
+
   bool isAuthor = false;
   bool isTeacher = false;
 
+  // Základní nastavení
   @override
   void initState() {
-    UserDataService().isTeacher().then((value) => setState(() {
-      isTeacher = value;
-    },));
+
+    // Kontrola, je-li uživatel učitelem
+    UserDataService().isTeacher().then(
+      (value) => setState(() {
+        isTeacher = value;
+      }
+    ));
+
     super.initState();
   }
 
@@ -36,24 +43,36 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Hamburger menu
+
+      // Hamburgerové rozbalovací menu
       drawer: MainScreenDrawer(updateCurrentCourseId),
+      
       // Nadpis
       appBar: AppBar(
         title: const Text('WordsApp 3'),
       ),
+      
       // Stránky
       body: [
+        
         // Domovská stránka pro zobrazení kurzu
         OverviewScreen(currentCourseId, isAuthor),
+        
+        // Stránka, na které učitel přidává do kurzu další uživatele. Zobrazí se pouze v případě, že je uživatel učitelem
         Visibility(
           visible: isTeacher,
           child: StudentManagerScreen(currentCourseId)
         ),
+
+        // Stránka s osobními údaji a nastavením profilu
         const ProfileScreen()
+
+
       ][currentPageIndex],
+      
       // Navigační menu dole
       bottomNavigationBar: NavigationBar(
+
         // Tlačítka na spodní navigačním panelu
         destinations: [
           const NavigationDestination(
@@ -72,8 +91,11 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Profile',
           ),
         ],
+
         // Aktuálně zvolená stránka
         selectedIndex: currentPageIndex,
+
+        // Změna při výběru stránky
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
@@ -83,6 +105,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  // Následující funkce aktualizuje id aktuálního kurzu
   void updateCurrentCourseId(String value, bool authorChange) {
     print(value);
     setState(() {

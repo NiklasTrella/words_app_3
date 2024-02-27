@@ -1,10 +1,15 @@
+// Na této stránce uživatel vidí svoje údaje. Některé z nich zdee může také upravit
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/data/system_data.dart';
 import 'package:words_app_3/backend/data/users_database/user_data.dart';
 import 'package:words_app_3/backend/system/auth.dart';
+
 import 'package:words_app_3/frontend/editors/password_editor.dart';
 import 'package:words_app_3/frontend/editors/profile_editor.dart';
 
+// Stránka profilu
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -25,6 +30,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              // Nadpis
               const Text(
                 "Profile Screen",
                 style: TextStyle(
@@ -35,17 +42,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 10),
               const Divider(),
               const SizedBox(height: 10),
+
+              // FutureBuilder čeká na data z internetu, poté je zobrazí
               FutureBuilder(
                 future: UserDataService().getCurrentUserData(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    // If the Future is still running, display a loading indicator
+                    
+                    // Zpbrazení načítání při čekání na data
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    // If an error occurred, display an error message
+                    
+                    // Zobrazení chybové hlášky v případě erroru
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    // If the Future is complete and data is available, use it
+
+                    // Jsou li data dostupná → zobrazení stránky
                     String accountType = "student";
                     if(snapshot.data?.isTeacher == true) {
                       accountType = "teacher";
@@ -53,7 +65,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
+                        // Email
                         Text("Email: ${snapshot.data?.email}"),
+                        
+                        // Jméno a příjmení
                         Row(
                           children: [
                             Column(
@@ -64,6 +80,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                             const SizedBox(width: 10.0),
+
+                            // Editor profilu
                             OutlinedButton.icon(
                               onPressed: () async {
                                 await Navigator.push(context, MaterialPageRoute(
@@ -76,7 +94,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             )
                           ],
                         ),
+
+                        // Typ účtu
                         Text("Account type: $accountType"),
+                        
+                        // Tlačítko na získání práv učitele
                         Visibility(
                           visible: !(snapshot.data?.isTeacher ?? false),
                           child: OutlinedButton(
@@ -97,6 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         OutlinedButton(
                                           onPressed: () async {
                                             if(!codeIsCorrect) {
+
+                                              // Ověření kódu, který z uživatele udělá učitele
                                               codeIsCorrect = await SystemDataService().checkTeacherCode(teacherCode.text);
                                               if(codeIsCorrect) {
                                                 UserDataService().becomeTeacher();
@@ -120,6 +144,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         const SizedBox(height: 8.0),
+
+                        // Změna hesla
                         OutlinedButton.icon(
                           onPressed: () async {
                             await Navigator.push(context, MaterialPageRoute(
@@ -137,13 +163,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+
+          // Smazání účtu
           OutlinedButton.icon(
             onPressed: () {
             TextEditingController deleteCodeController = TextEditingController();
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text("Confirm teacher identity"),
+                  title: const Text("Confirm deletion"),
                   content: Column(
                     children: [
                       const Text("Enter the code you received from the network manager."),

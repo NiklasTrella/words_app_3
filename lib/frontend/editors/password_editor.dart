@@ -1,6 +1,10 @@
+// Na této stránce může uživatel změnit své heslo
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/system/auth.dart';
 
+// Stránka s editorem hesla
 class PasswordEditor extends StatefulWidget {
   const PasswordEditor({super.key});
 
@@ -18,12 +22,14 @@ class _PasswordEditorState extends State<PasswordEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile editor"),
+        title: const Text("Password editor"),
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+
+            // Textové pole
             TextField(
               obscureText: _obscureText,
               controller: firstPasswordController,
@@ -31,6 +37,8 @@ class _PasswordEditorState extends State<PasswordEditor> {
                 label: Text("New password")
               ),
             ),
+
+            // Zopakování hesla
             TextField(
               obscureText: _obscureText,
               controller: secondPasswordController,
@@ -38,6 +46,8 @@ class _PasswordEditorState extends State<PasswordEditor> {
                 label: Text("Retype password")
               ),
             ),
+
+            // Zaškrtávací políčko → zobrazení hesla
             Row(
               children: [
                 Checkbox(
@@ -52,6 +62,8 @@ class _PasswordEditorState extends State<PasswordEditor> {
               ],
             ),
             const SizedBox(height: 8.0),
+
+            // Tlačítko → uložení nového hesla
             OutlinedButton(
               onPressed: () {
                 if(firstPasswordController.text == secondPasswordController.text) {

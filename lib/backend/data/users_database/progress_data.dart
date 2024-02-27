@@ -1,12 +1,17 @@
+// Tento soubor obsahuje funkce pro manipulaci s daty postupu v databázi Firebase
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:words_app_3/backend/data/main_database/course_data.dart';
 import 'package:words_app_3/backend/data/main_database/set_data.dart';
 import 'package:words_app_3/backend/data/main_database/word_data.dart';
+import 'package:words_app_3/backend/data/system_data.dart';
 import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
 class ProgressDataService {
-  // Zápis jednoho progressu
+  
+  // Zápis postupu v kurzu
   Future<CourseModel> addCourseProgress(String? courseId, String? userId) async {
     CourseModel course = CourseModel(AuthService().user?.uid, courseId, null);
     CollectionReference courseProgress = FirebaseFirestore.instance
@@ -21,6 +26,7 @@ class ProgressDataService {
     return course;
   }
 
+  // Zápis postupu v setu
   Future<SetModel> addSetProgress(String? setId, String? courseId, String? userId) async {
     SetModel set = SetModel(courseId, setId, null);
     CollectionReference setProgress = FirebaseFirestore.instance
@@ -37,7 +43,8 @@ class ProgressDataService {
     return set;
   }
 
-  Future<WordModel> addWordProgress(int? memory, String? wordId, String? setId, String? courseId, String? userId) async {
+  // Zápis postupu ve slově
+  Future<WordModel> addWordProgress(int? memory, String wordId, String? setId, String? courseId, String? userId) async {
     WordModel word = WordModel(wordId, null, null);
     CollectionReference wordProgress = FirebaseFirestore.instance
       .collection("users")
@@ -47,6 +54,8 @@ class ProgressDataService {
       .collection("setProgress")
       .doc(setId)
       .collection("wordProgress");
+    
+    print("AddWordProgress wordId: $wordId");
 
     wordProgress.doc(wordId).set(word.wordProgressToMap()).then((value) {
       print('Successfully added wordProgress');
@@ -55,7 +64,7 @@ class ProgressDataService {
     return word;
   }
 
-  // Zápis několika progressů
+  // Zápis několika postupů
   Future<void> addStudentsProgress(String? courseId, List<UserModel> students) async {
     addStudentsCourseProgress(courseId, students);
     List<SetModel> setsInCourse = await SetDataService().getSetsList(courseId);
@@ -63,17 +72,21 @@ class ProgressDataService {
       addStudentsSetProgress(set.setId, courseId, students);
       List<WordModel> wordsInSet = await WordDataService().getWordsList(set);
       for(WordModel word in wordsInSet) {
-        addStudentsWordProgress(word.wordId, set.setId, courseId, students);
+        if(word.wordId != null) {
+          addStudentsWordProgress(word.wordId!, set.setId, courseId, students);
+        }
       }
     }
   }
 
+  // Zápis několika postupů v kurzu
   Future<void> addStudentsCourseProgress(String? courseId, List<UserModel> students) async {
     for(UserModel student in students) {
       addCourseProgress(courseId, student.userId);
     }
   }
 
+  // Zápis několika postupů v setu
   Future<void> addStudentsSetProgress(String? setId, String? courseId, List<UserModel>? students) async {
     students ??= await CourseDataService().getStudentsList(courseId);
     for(UserModel student in students) {
@@ -81,7 +94,8 @@ class ProgressDataService {
     }  
   }
 
-  Future<void> addStudentsWordProgress(String? wordId, String? setId, String? courseId, List<UserModel>? students) async {
+  // Zápis několika postupů ve slově
+  Future<void> addStudentsWordProgress(String wordId, String? setId, String? courseId, List<UserModel>? students) async {
     int memory = 0;
     students ??= await CourseDataService().getStudentsList(courseId);
     for(UserModel student in students) {
@@ -89,7 +103,7 @@ class ProgressDataService {
     }
   }
 
-  // Mazání jednoho progressu
+  // Mazání postupu v kurzu
   Future<void> deleteCourseProgress(String? courseId, String? userId) async {
     DocumentReference courseProgressDoc = FirebaseFirestore.instance
       .collection("users")
@@ -97,9 +111,10 @@ class ProgressDataService {
       .collection("courseProgress")
       .doc(courseId);
     
-    courseProgressDoc.delete();
+    SystemDataService().deleteDocumentAndContents(courseProgressDoc, "courseProgress");
   }
 
+  // Mazání postupu v setu
   Future<void> deleteSetProgress(String? setId, String? courseId, String? userId) async {
     DocumentReference setProgressDoc = FirebaseFirestore.instance
       .collection("users")
@@ -109,9 +124,10 @@ class ProgressDataService {
       .collection("setProgress")
       .doc(setId);
 
-    setProgressDoc.delete();
+    SystemDataService().deleteDocumentAndContents(setProgressDoc, "setProgress");
   }
 
+  // Mazání postupu ve slově
   Future<WordModel> deleteWordProgress(String? wordId, String? setId, String? courseId, String? userId) async {
     WordModel word = WordModel(wordId, null, null);
     DocumentReference wordProgressDoc = FirebaseFirestore.instance
@@ -124,12 +140,13 @@ class ProgressDataService {
       .collection("wordProgress")
       .doc(wordId);
 
-    wordProgressDoc.delete();
+    SystemDataService().deleteDocumentAndContents(wordProgressDoc, "wordProgress");
+    print("Deleted a student progress doc of a student with id: $userId");
     
     return word;
   }
 
-  // Mazání několika progressů
+  // Mazání několika postupů v kurzu
   Future<void> deleteStudentsCourseProgress(String? courseId, List<UserModel>? students) async {
     students ??= await CourseDataService().getStudentsList(courseId);
     for(UserModel student in students) {
@@ -137,6 +154,7 @@ class ProgressDataService {
     }
   }
 
+  // Mazání několika postupů v setu
   Future<void> deleteStudentsSetProgress(String? setId, String? courseId, List<UserModel>? students) async {
     students ??= await CourseDataService().getStudentsList(courseId);
     for(UserModel student in students) {
@@ -144,15 +162,17 @@ class ProgressDataService {
     }
   }
 
+  // Mazání několika postupů ve slově
   Future<void> deleteStudentsWordProgress(String? wordId, String? setId, String? courseId, List<UserModel>? students) async {
     students ??= await CourseDataService().getStudentsList(courseId);
     for(UserModel student in students) {
+      print("Student progress deleted: ${student.userId}");
       deleteWordProgress(wordId, setId, courseId, student.userId);
     }
   }
 
   // Změna jednoho progressu
-  Future<void> updateSelfWordsProgress(Map<String, int> wordProgressData, String? setId, String? courseId) async {
+  Future<void> updateSelfWordsProgress(Map<String, List<int>> wordProgressData, String? setId, String? courseId) async {
     String? selfUserId = AuthService().getUserId();
     
     CollectionReference wordProgress = FirebaseFirestore.instance
@@ -164,13 +184,21 @@ class ProgressDataService {
       .doc(setId)
       .collection("wordProgress");
     
-    wordProgressData.forEach((key, value) {
-      WordModel word = WordModel.withMemory(key, null, null, value);
+    wordProgressData.forEach((key, value) async {
+      WordModel word = WordModel.withMemory(key, null, null, value[0], value[1]);
+      DocumentSnapshot wordProgressDoc = await wordProgress.doc(key).get();
+
+      if(wordProgressDoc["memory1"] > word.memory1) {
+        word.memory1 = wordProgressDoc["memory1"];
+      }
+      if(wordProgressDoc["memory2"] > word.memory2) {
+        word.memory2 = wordProgressDoc["memory2"];
+      }
       wordProgress.doc(key).set(word.wordProgressToMap());
     });
   }
 
-  // Výpis progressu studenta
+  // Výpis postupu studenta v setu
   Future<List<WordModel>> getProgress(UserModel student, SetModel set) async {
     CollectionReference wordProgressCollection = FirebaseFirestore.instance
       .collection("users")
@@ -185,15 +213,15 @@ class ProgressDataService {
     
     await wordProgressCollection.get().then((QuerySnapshot querySnapshot) {
       for(QueryDocumentSnapshot doc in querySnapshot.docs) {
-        words.add(WordModel.withMemory(doc.id, null, null, doc["memory"] ?? 0));
-        print("Doc.id: ${doc.id}\tmemory:${doc['memory'] ?? 0}");
+        words.add(WordModel.withMemory(doc.id, null, null, doc["memory1"] ?? 0, doc["memory2"] ?? 0));
+        print("Doc.id: ${doc.id}\tmemory1:${doc['memory1'] ?? 0}, memory2:${doc['memory2'] ?? 0}");
       }
     });
 
     return words;
   }
 
-  // Výpis progressů studentů
+  // Výpis progressů studentů v setu
   Future<Map<UserModel, List<WordModel>>> getStudentProgress(List<UserModel> students, SetModel set) async {
     Map<UserModel, List<WordModel>> result = {};
 

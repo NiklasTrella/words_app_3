@@ -1,6 +1,10 @@
+// Tento soubor obsahuje funkce pro manipulaci s daty aktuálního uživatele v databázi Firebase.
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:words_app_3/backend/data/main_database/course_data.dart';
+import 'package:words_app_3/backend/data/system_data.dart';
 import 'package:words_app_3/backend/data/users_database/student_data.dart';
 import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/system/models.dart';
@@ -20,15 +24,11 @@ class UserDataService {
     DocumentReference document = usersCollection.doc(userId);
 
     await document.set(user.userToMap());
-
-    // usersCollection.add(user.userToMap()).then((DocumentReference doc) {
-    //   // ignore: avoid_print
-    //   print('New user added.\nDocumentSnapshot added with ID: ${doc.id}');
-    // });
     
     return user;
   }
 
+  // Aktualizace jména uživatele
   Future<void> updateUserName(String firstName, String lastName) async {
     User? user = AuthService().user;
     DocumentReference document = usersCollection.doc(user?.uid);
@@ -38,6 +38,7 @@ class UserDataService {
     });
   }
   
+  // Získání statusu učitele
   Future<void> becomeTeacher() async {
     User? user = AuthService().user;
     DocumentReference document = usersCollection.doc(user?.uid);
@@ -46,6 +47,7 @@ class UserDataService {
     });
   }
 
+  // Kontrola statusu učitele
   Future<bool> isTeacher() async {
     User? user = AuthService().user;
     DocumentReference document = usersCollection.doc(user?.uid);
@@ -54,6 +56,7 @@ class UserDataService {
     return data["isTeacher"];
   }
 
+  // Získání dat aktuálně přihlášeného uživatele
   Future<UserModel> getCurrentUserData() async {
 
     User? user = AuthService().user;
@@ -69,10 +72,11 @@ class UserDataService {
     return userData;
   }
 
+  // Smazání dat uživatele z databáze "users"
   Future<void> deleteUserData() async {
     String? userId = AuthService().getUserId();
-    DocumentReference document = usersCollection.doc(userId);
-    await document.delete();
+    DocumentReference documentReference = usersCollection.doc(userId);
+    SystemDataService().deleteDocumentAndContents(documentReference, "users");
 
     List<CourseModel> courses = [];
     courses = await CourseDataService().getStudiedCourses();
@@ -80,5 +84,16 @@ class UserDataService {
     for(CourseModel course in courses) {
       StudentDataService().removeStudent(course.courseId!, userId!);
     }
+  }
+
+  // Kontrola existence uživatele
+  Future<bool> checkUserExistence(String email) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+      .collection("users")
+      .where("email", isEqualTo: email)
+      .limit(1)
+      .get();
+
+    return querySnapshot.docs.isNotEmpty;
   }
 }

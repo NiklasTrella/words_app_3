@@ -1,27 +1,16 @@
-// Import Firebase Auth
-// ignore_for_file: avoid_print
+// Tento soubor obsahuje funkce pro přihlašování a autentikaci uživatelů v databázi Firebase Authentication
 
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:words_app_3/backend/data/users_database/user_data.dart';
 
 // Třída s metodami pro přihlašování
-// https://firebase.google.com/docs/auth/flutter/start
 class AuthService {
+  
   // Stream změn v přihlášení
   final userStream = FirebaseAuth.instance.authStateChanges();
-
-  // Some Firebase documentation recommendation
-  StreamSubscription<User?> userStream2 = FirebaseAuth.instance
-    .authStateChanges()
-    .listen((User? user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-      }
-    });
 
   final User? user = FirebaseAuth.instance.currentUser;
   final FirebaseAuth instance = FirebaseAuth.instance;
@@ -34,6 +23,8 @@ class AuthService {
     UserCredential usercredential = await auth.createUserWithEmailAndPassword(email: email, password: password);
     print('A new user was created!');
 
+    // Ověřovací email "reset password"
+    resetPassword(email);
     String userId = usercredential.user?.uid ?? "";
     return userId;
   }
@@ -50,15 +41,18 @@ class AuthService {
     print('The Function signOut was called.');
   }
 
+  // Získání id právě přihlášeného uživatele
   String? getUserId() {
     return user?.uid;
   }
 
+  // Změna hesla
   Future<void> updatePassword(String newPassword) async {
     user?.updatePassword(newPassword);
     print("Password updated!");
   }
 
+  // Resetování hesla
   Future<String?> resetPassword(String email) async {
     try {
       await instance.sendPasswordResetEmail(email: email);
@@ -69,6 +63,7 @@ class AuthService {
     return null;
   }
 
+  // Smazání uživatele
   Future<void> deleteUser() async {
     await UserDataService().deleteUserData();
     await user?.delete();

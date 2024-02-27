@@ -1,7 +1,11 @@
+// Na této stránce se jen zobrazí seznam slovíček v daném setu
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/data/main_database/word_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
+// Stránka přehledu
 class Overview extends StatelessWidget {
   final SetModel set;
   const Overview(this.set, {super.key});
@@ -17,6 +21,7 @@ class Overview extends StatelessWidget {
   }
 }
 
+// Seznam slov v setu
 class OverviewWordList extends StatefulWidget {
   final SetModel set;
   OverviewWordList(this.set, {super.key});
@@ -43,26 +48,34 @@ class _OverviewWordListState extends State<OverviewWordList> {
       itemBuilder: (context, index) {
         return Column(
           children: [
+
+            // Jedna karta (v tomto případě jako Widget Container)
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey, width: 1.0),
                 borderRadius: const BorderRadius.all(Radius.circular(8.0)),
               ),
               child: ListTile(
-                subtitle: Text("Word number: ${index+1}"),
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+                    // Originál
                     Text(
                       words[index].original ?? "",
                       textAlign: TextAlign.left
                     ),
+
+                    // Překlad
                     Text(
                       words[index].translation ?? "",
                       textAlign: TextAlign.left
                     )
                   ],
                 ),
+
+                // Číslo slova
+                subtitle: Text("Word number: ${index+1}"),
               ),
             ),
             const SizedBox(height: 8.0)
@@ -73,6 +86,8 @@ class _OverviewWordListState extends State<OverviewWordList> {
   }
 
   Future<void> loadData() async {
+
+    // Načtení dat z databáze
     List<WordModel> wordsList = await WordDataService().getWordsList(widget.set);
 
     setState(() {

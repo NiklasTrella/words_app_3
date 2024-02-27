@@ -1,13 +1,15 @@
+// Na této stránce probíhá vytvoření nového účtu
+
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:words_app_3/backend/system/auth.dart';
 import 'package:words_app_3/backend/data/system_data.dart';
 import 'package:words_app_3/backend/data/users_database/user_data.dart';
 
+// Stránka vytvoření účtu
 class SignUpScreen extends StatefulWidget {
-  final String email;
-  final String password;
-
-  SignUpScreen(this.email, this.password, {super.key});
+  SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -16,32 +18,32 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool codeIsCorrect = false;
 
+  // Ovladače textových polí
+  TextEditingController email = TextEditingController();
   TextEditingController firstName = TextEditingController();
-
   TextEditingController lastName = TextEditingController();
-
   TextEditingController teacherCode = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    String hiddenPassword = "";
-    for(int i = 0; i < widget.password.length; i++) {
-      hiddenPassword += "*";
-    }
     return Scaffold(
       appBar: AppBar(
         title: const Text("Sign up"),
       ),
       body: Column(
         children: [
+
+          // Email
           ListTile(
-            title: Text(widget.email),
-            subtitle: const Text("Email"),
+            title: TextFormField(
+              controller: email,
+              decoration: const InputDecoration(
+                labelText: "Email"
+              ),
+            ),
           ),
-          ListTile(
-            title: Text(hiddenPassword),
-            subtitle: const Text("Password"),
-          ),
+
+          // Jméno
           ListTile(
             title: TextFormField(
               controller: firstName,
@@ -50,6 +52,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
           ),
+
+          // Příjmení
           ListTile(
             title: TextFormField(
               controller: lastName,
@@ -58,8 +62,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
           ),
+
+          // Získání učitelského účtu - tlačítko
           OutlinedButton(
             onPressed: () async {
+
+              // Zadání učitelského kódu
               await showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -75,6 +83,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         OutlinedButton(
                           onPressed: () async {
                             if(!codeIsCorrect) {
+
+                              // Ověření učitelského kódu
                               codeIsCorrect = await SystemDataService().checkTeacherCode(teacherCode.text);
                               if(codeIsCorrect) {
                                 Navigator.pop(context);
@@ -105,15 +115,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           const SizedBox(height: 8.0),
+          const Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("After clicking on Sign Up, please check your email in order to set your password.")),
+          const SizedBox(height: 8.0),
+
+          // Potvrzení založení účtu → vygenerování náhodného hesla
           FilledButton(
             onPressed: () async {
-              AuthService().signUp(widget.email, widget.password).then((value) async {
-                print("UserId: $value");
-                await UserDataService().addUser(value, firstName.text, lastName.text, codeIsCorrect, widget.email);
-                print("User added to the database.");
+              const String chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()-_=+';
+              String randomPassword = List.generate(12, (index) {
+                  return chars[Random().nextInt(chars.length)];
+                }
+              ).join();
+
+              // Registrace uživatele
+              await AuthService().signUp(email.text, randomPassword).then((value) async {
+                await UserDataService().addUser(value, firstName.text, lastName.text, codeIsCorrect, email.text);
                 Navigator.pop(context);
               });
-              // Sign the user up
             },
             child: const Text("Sign up")
           )

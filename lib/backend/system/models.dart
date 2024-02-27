@@ -1,3 +1,5 @@
+// Tento soubor obsahuje modely (třídy) pro různé objekty
+
 // Model uživatele
 class UserModel {
   String? userId;
@@ -50,25 +52,19 @@ class SetModel {
       "title": title
     };
   }
-
-  Map<String, dynamic> setProgressToMap() {
-    return <String, dynamic> {
-      "setId": setId,
-    };
-  }
 }
 
 // Model slova
 class WordModel {
-  // String? setId;
   String? wordId;
   String? original;
   String? translation;
-  int memory = 0;
+  int memory1 = 0;
+  int memory2 = 0;
 
   WordModel(this.wordId, this.original, this.translation);
 
-  WordModel.withMemory(this.wordId, this.original, this.translation, this.memory);
+  WordModel.withMemory(this.wordId, this.original, this.translation, this.memory1, this.memory2);
 
   Map<String, dynamic> wordToMap() {
     return <String, dynamic> {
@@ -77,13 +73,19 @@ class WordModel {
     };
   }
 
-  void addMemory(int newMemory) {
-    memory = newMemory;
+  void addMemory(int? newMemory1, int? newMemory2) {
+    if(newMemory1 != null) {
+      memory1 = newMemory1;
+    }
+    if(newMemory2 != null) {
+      memory1 = newMemory2;
+    }
   }
 
   Map<String, dynamic> wordProgressToMap() {
     return <String, dynamic> {
-      "memory": memory
+      "memory1": memory1,
+      "memory2": memory2
     };
   }
 }

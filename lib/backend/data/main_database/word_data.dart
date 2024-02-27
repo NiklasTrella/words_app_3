@@ -1,3 +1,5 @@
+// Tento soubor obsahuje funkce pro manipulaci s daty slov v databázi Firebase
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:words_app_3/backend/data/users_database/progress_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
@@ -21,18 +23,20 @@ class WordDataService {
 
     if(word.wordId == null) {
       wordsCollection.add(word.wordToMap()).then((DocumentReference doc) {
-        ProgressDataService().addStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
+        ProgressDataService().addStudentsWordProgress(doc.id, setModel.setId, setModel.courseId, null);
         print('New word added.\tDocumentSnapshot added with ID: ${doc.id}');
       });
     } else {
       wordsCollection.doc(word.wordId).update(word.wordToMap());
+      print("A word has been updated: ${word.wordId}");
+      print("New original: ${word.original}");
+      print("New translation: ${word.translation}");
     }
     
     return word;
   }
 
-  // Výpis seznamu slov z databáze "words" v setu, který
-  // je v databázi "sets"
+  // Výpis seznamu slov z databáze "words"
   Future<List<WordModel>> getWordsList(SetModel setModel) async {
     List<WordModel> wordList = [];
 
@@ -44,8 +48,6 @@ class WordDataService {
 
     await wordsCollection.get().then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-          // print("Doc: ${doc.id}");
-          // print("Original: ${doc["original"]}\tTranslation: ${doc["translation"]}\n");
           wordList.add(WordModel(doc.id, doc["original"], doc["translation"]));
       }
     });

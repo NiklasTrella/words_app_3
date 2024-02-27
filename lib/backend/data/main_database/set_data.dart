@@ -1,8 +1,8 @@
+// Tento soubor obsahuje funkce pro manipulaci s daty setů v databázi Firebase
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:words_app_3/backend/data/users_database/progress_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
-
-// Odkazy na ostatní datové třídy
 import 'package:words_app_3/backend/data/main_database/word_data.dart';
 
 class SetDataService {
@@ -13,8 +13,7 @@ class SetDataService {
   CollectionReference coursesCollection = FirebaseFirestore.instance.collection("courses");
   CollectionReference usersCollection = FirebaseFirestore.instance.collection("users");
 
-  // Zápis setu do databáze "sets" jednoho kurzu, který je
-  // součástí databáze "courses"
+  // Zápis setu do databáze "sets"
   Future<SetModel> addSet(SetModel setModel, List<WordModel> words) async {
     
     CollectionReference setsCollection = FirebaseFirestore.instance
@@ -25,7 +24,6 @@ class SetDataService {
     // Přidání nového setu
     if(setModel.setId == null) {
       setsCollection.add(setModel.setToMap()).then((DocumentReference doc) {
-        print('New set added.\tDocumentSnapshot added with ID: ${doc.id}');
         ProgressDataService().addStudentsSetProgress(doc.id, setModel.courseId, null);
 
         setModel.setId = doc.id;
@@ -33,13 +31,14 @@ class SetDataService {
         // Zápis všech slov v setu
         for(WordModel word in words) {
           WordDataService().addWord(setModel, word);
-          ProgressDataService().addStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
+          ProgressDataService().addStudentsWordProgress(word.wordId!, setModel.setId, setModel.courseId, null);
         }
       });
+    
     // Aktualizace existujícího setu
     } else {
       setsCollection.doc(setModel.setId).update(setModel.setToMap()).then((value) {
-      print("An old set updated.\tSetId: ${setModel.setId}");
+    
         // Zápis všech slov v setu
         updateWords(setModel, words);
       });
@@ -48,6 +47,7 @@ class SetDataService {
     return setModel;
   }
 
+  // Aktualizace slov
   Future<void> updateWords(SetModel setModel, List<WordModel> wordsToUpdate) async {
     if(setModel.setId == null) {
       print("SetId is null. That's wrong.");
@@ -60,23 +60,13 @@ class SetDataService {
       }
     }
 
-    /* Postup:
-      1. Získat seznam slov z databáze
-      2. Zkontrolovat všechna slova v databázi se seznamem "words" → vždy po kontrole slovo smazat ze seznamu "words"
-        2.1. Smazat všechna slova, která nejsou v seznamu "words" (podle id)
-        2.2. Updatovat slova, která jsou odlišná od těch v seznamu "words"
-      3. Projít ostatní slova v seznamu "words" a přidat je
-    */
-
     List<WordModel> databaseWordsList = await WordDataService().getWordsList(setModel);
 
     for(WordModel word in databaseWordsList) {
+
       // Zkontrolovat, existuje-li slovo se stejným wordId
       // Pokud ne, spustí se následující if statement
       if(!wordsToUpdate.any((element) => element.wordId == word.wordId)) {
-        if(word.wordId == null) {
-          print("Something went wrong. A word in a database cannot have a wordId null.");
-        }
         WordDataService().deleteWord(setModel, word.wordId as String);
         ProgressDataService().deleteStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
 
@@ -84,8 +74,8 @@ class SetDataService {
         WordModel wordToUpdate = wordsToUpdate.firstWhere((element) => element.wordId == word.wordId);
         // Zkontrolovat, jsou-li data identická
         // Pokud ne, spustí se následující if statement
-        if(word != wordToUpdate) {
-          WordDataService().addWord(setModel, word);
+        if(!(word.original == wordToUpdate.original && word.translation == wordToUpdate.translation)) {
+          WordDataService().addWord(setModel, wordToUpdate);
         }
         wordsToUpdate.remove(wordToUpdate);
       }
@@ -93,39 +83,28 @@ class SetDataService {
 
     for(WordModel newWord in wordsToUpdate) {
       WordDataService().addWord(setModel, newWord);
-      ProgressDataService().addStudentsWordProgress(newWord.wordId, setModel.setId, setModel.courseId, null);
+      ProgressDataService().addStudentsWordProgress(newWord.wordId!, setModel.setId, setModel.courseId, null);
     }
   }
 
-  // Výpis seznamu setů z databáze "sets" v kurzu, který
-  // je v databázi "courses"
+  // Výpis seznamu setů z databáze "sets"
   Future<List<SetModel>> getSetsList(courseId) async {
     List<SetModel> setsList = [];
-
-    // print("Function getSetsListFuture() has started.");
 
     await coursesCollection
       .doc(courseId)
       .collection("sets")
       .get().then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-
-          // print("Doc: ${doc.id}");
-          // print(doc["title"]);
-          
           setsList.add(SetModel(courseId, doc.id, doc["title"]));
       }
     });
-
-    // print("Function getSetsListFuture() ended.");
 
     return setsList;
   }
 
   // Výpis názvu setu
   Future<String> getSetTitleFuture(SetModel? set) async {
-    // print("SetId is: $setId");
-
     if (set == null) {
       return "Firstly choose a set.";
     }
@@ -153,9 +132,7 @@ class SetDataService {
   // Výpis počtu slov v setu
   Future<int> getWordsNumberFuture(SetModel setModel) async {
     int numberOfWords = 0;
-    // print("CourseId: ${setModel.courseId}\tSetId: ${setModel.setId}");
 
-    // print("Function getSetsListFuture() has started.");
     CollectionReference wordsCollection = coursesCollection
       .doc(setModel.courseId)
       .collection("sets")
@@ -164,7 +141,6 @@ class SetDataService {
 
     await wordsCollection.get().then((QuerySnapshot querySnapshot) {
       numberOfWords = querySnapshot.docs.length;
-      // print("Number of words in set ${setModel.title}: $numberOfWords");
     });
     
     return numberOfWords;

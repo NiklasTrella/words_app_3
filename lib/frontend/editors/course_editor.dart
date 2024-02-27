@@ -1,7 +1,11 @@
+// Na této stránce může uživatel editovat kurz
+
 import 'package:flutter/material.dart';
+
 import 'package:words_app_3/backend/data/main_database/course_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
+// Stránka editoru kurzu
 class CourseEditorScreen extends StatefulWidget {
   final CourseModel course;
   final Function? parentSetState;
@@ -17,6 +21,8 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
   @override
   void initState() {
     if(widget.course.title != null) {
+
+      // Do ovladače názvu kurzu je vložen název kurzu
       titleController = TextEditingController(text: widget.course.title);
     }
     super.initState();
@@ -32,6 +38,8 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
         padding: const EdgeInsets.all(20),
         child: ListView(
           children: [
+
+            // Textové pole na změnu názvu kurzu
             TextField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -39,6 +47,8 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
               ),
               controller: titleController,
             ),
+
+            // Tlačítko na uložení změn (nebo uložení nového) kurzu
             ElevatedButton(
               child: widget.course.courseId == null ? const Text('Create course') : const Text('Save course'),
               onPressed: () {
@@ -50,12 +60,16 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
                 }
               },
             ),
+
+            // Tlačítko na smazání kurzu
             Visibility(
               visible: widget.course.courseId != null,
               child: TextButton.icon(
                 label: const Text("Delete course"),
                 onPressed: () {
                   String? courseTitle = widget.course.title;
+
+                  // Potvrzení smazání kurzu
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
