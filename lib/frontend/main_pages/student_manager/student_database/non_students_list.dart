@@ -35,11 +35,12 @@ class _NonStudentsListState extends State<NonStudentsList> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
 
         // Seznam studentů
         ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: nonStudents.length,
           itemBuilder: (context, index) {

@@ -53,8 +53,6 @@ class StudentDataService {
       }
     });
 
-    listOfNonStudentIds.remove(AuthService().user?.uid);
-
     List<UserModel> listOfNonStudents = [];
 
     for(String nonStudentId in listOfNonStudentIds) {

@@ -16,7 +16,22 @@ class Overview extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Overview"),
       ),
-      body: OverviewWordList(set),
+      body: Column(
+        //padding: const EdgeInsets.all(10),
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              set.title ?? "No title.",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+          ),
+          OverviewWordList(set),
+        ],
+      ),
     );
   }
 }
@@ -24,7 +39,7 @@ class Overview extends StatelessWidget {
 // Seznam slov v setu
 class OverviewWordList extends StatefulWidget {
   final SetModel set;
-  OverviewWordList(this.set, {super.key});
+  const OverviewWordList(this.set, {super.key});
 
   @override
   State<OverviewWordList> createState() => _OverviewWordListState();
@@ -41,47 +56,49 @@ class _OverviewWordListState extends State<OverviewWordList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      shrinkWrap: true,
-      itemCount: words.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-
-            // Jedna karta (v tomto případě jako Widget Container)
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey, width: 1.0),
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-              ),
-              child: ListTile(
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    // Originál
-                    Text(
-                      words[index].original ?? "",
-                      textAlign: TextAlign.left
-                    ),
-
-                    // Překlad
-                    Text(
-                      words[index].translation ?? "",
-                      textAlign: TextAlign.left
-                    )
-                  ],
+    return Expanded(
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        shrinkWrap: true,
+        itemCount: words.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+      
+              // Jedna karta (v tomto případě jako Widget Container)
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 1.0),
+                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                 ),
-
-                // Číslo slova
-                subtitle: Text("Word number: ${index+1}"),
+                child: ListTile(
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+      
+                      // Originál
+                      Text(
+                        words[index].original ?? "",
+                        textAlign: TextAlign.left
+                      ),
+      
+                      // Překlad
+                      Text(
+                        words[index].translation ?? "",
+                        textAlign: TextAlign.left
+                      )
+                    ],
+                  ),
+      
+                  // Číslo slova
+                  subtitle: Text("Word number: ${index+1}"),
+                ),
               ),
-            ),
-            const SizedBox(height: 8.0)
-          ],
-        );
-      },
+              const SizedBox(height: 8.0)
+            ],
+          );
+        },
+      ),
     );
   }
 

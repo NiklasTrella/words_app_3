@@ -40,84 +40,87 @@ class _CreateSetScreenState extends State<SetEditorScreen> {
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-
-              // Textové pole na název setu
-              TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Title'
-                ),
-                controller: titleController,
+        child: ListView(
+          children: [
+        
+            // Textové pole na název setu
+            TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Title'
               ),
-              const SizedBox(height: 10),
-
-              // Seznam slov
-              WordListGenerator(widget.setModel, parentUpdateFunction),
-              const SizedBox(height: 10),
-
-              // Tlačítko na uložení setu
-              ElevatedButton(
-                child: widget.setModel.setId == null ? const Text('Create set') : const Text('Save set'),
+              controller: titleController,
+            ),
+            const SizedBox(height: 10),
+        
+            // Seznam slov
+            WordListGenerator(widget.setModel, parentUpdateFunction),
+            const SizedBox(height: 10),
+        
+            // Tlačítko na uložení setu
+            ElevatedButton(
+              child: widget.setModel.setId == null ? const Text('Create set') : const Text('Save set'),
+              onPressed: () {
+                SetModel setToReturn = SetModel(widget.setModel.courseId, widget.setModel.setId, titleController.text);
+                SetDataService().addSet(setToReturn, words).then(
+                  (value) => Navigator.pop(context)
+                );
+              },
+            ),
+        
+            // Tlačítko na smazání setu (zobrazí se pouze jeho tvůrci)
+            Visibility(
+              visible: widget.setModel.setId != null,
+              child: TextButton.icon(
+                label: const Text("Delete set"),
                 onPressed: () {
-                  SetModel setToReturn = SetModel(widget.setModel.courseId, widget.setModel.setId, titleController.text);
-                  SetDataService().addSet(setToReturn, words).then(
-                    (value) => Navigator.pop(context)
+                  String? setTitle = widget.setModel.title;
+        
+                  // Potvrzení smazání setu
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Removal confirmation"),
+                        content: Text("Do you want to remove $setTitle?"),
+                        actions: [
+                          TextButton.icon(
+                            icon: const Icon(Icons.done),
+                            onPressed: () {
+                              SetDataService().deleteSet(widget.setModel);
+                              widget.parentSetState!();
+                              Navigator.pop(context);
+                              popContext();
+                            },
+                            label: const Text("Yes."),
+                          ),
+                          TextButton.icon(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            label: const Text("No.")
+                          )
+                        ],
+                      );
+                    }
                   );
                 },
+                icon: const Icon(Icons.delete),
               ),
-
-              // Tlačítko na smazání setu (zobrazí se pouze jeho tvůrci)
-              Visibility(
-                visible: widget.setModel.setId != null,
-                child: TextButton.icon(
-                  label: const Text("Delete set"),
-                  onPressed: () {
-                    String? setTitle = widget.setModel.title;
-
-                    // Potvrzení smazání setu
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text("Removal confirmation"),
-                          content: Text("Do you want to remove $setTitle?"),
-                          actions: [
-                            TextButton.icon(
-                              icon: const Icon(Icons.done),
-                              onPressed: () {
-                                SetDataService().deleteSet(widget.setModel);
-                                widget.parentSetState!();
-                                Navigator.pop(context);
-                              },
-                              label: const Text("Yes."),
-                            ),
-                            TextButton.icon(
-                              icon: const Icon(Icons.close),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              label: const Text("No.")
-                            )
-                          ],
-                        );
-                      }
-                    );
-                  },
-                  icon: const Icon(Icons.delete),
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         )
       ),
     );
+  }
+  void popContext() {
+    Navigator.pop(context);
   }
 
   // Funkce, která umožňuje generátoru seznamu slov (WordListGenerator) ukládat svá data do tohoto Widgetu
   void parentUpdateFunction(List<WordModel> wordsToUpdate) {
     words = wordsToUpdate;
+    print("Set editor words length: ${words.length}");
   }
 }

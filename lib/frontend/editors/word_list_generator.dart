@@ -31,26 +31,27 @@ class _WordListGeneratorState extends State<WordListGenerator> {
     return Column(
       children: [
         ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: words.length,
           itemBuilder: (context, index) {
             return Column(
               children: [
                 const SizedBox(height: 8.0),
-
+        
                 // Karta (zde Container) jednoho slova
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey, width: 1.0),
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                   ),
-
+        
                   // Číslo slova
                   child: ListTile(
                     subtitle: Text("Word number: ${index+1}"),
                     title: Column(
                       children: [
-
+        
                         // Textové pole originálu
                         TextField(
                           controller: TextEditingController(text: words[index].original),
@@ -59,7 +60,7 @@ class _WordListGeneratorState extends State<WordListGenerator> {
                             hintText: 'Original word'
                           ),
                         ),
-
+        
                         // Textové pole překladu
                         TextField(
                           controller: TextEditingController(text: words[index].translation),
@@ -71,7 +72,7 @@ class _WordListGeneratorState extends State<WordListGenerator> {
                         const SizedBox(height: 10)
                       ],
                     ),
-
+        
                     // Tlačítko na smazání slova
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
@@ -91,7 +92,9 @@ class _WordListGeneratorState extends State<WordListGenerator> {
           OutlinedButton.icon( 
             icon: const Icon(Icons.add),
             label: const Text('Add a new word'),
-            onPressed: localWordAdd
+            onPressed: () {
+              localWordAdd();
+            }
         )
       ],
     );
@@ -102,6 +105,8 @@ class _WordListGeneratorState extends State<WordListGenerator> {
     setState(() {
       words.add(WordModel(null, null, null));
     });
+    print("localWordAdd");
+    print("Word length: ${words.length}");
 
     parentUpdate();
   }
@@ -132,6 +137,8 @@ class _WordListGeneratorState extends State<WordListGenerator> {
 
   // Funkce, která aktualizuje data rodičovského Widgetu
   void parentUpdate() {
+    print("Parent update function");
+    print("Words length: ${words.length}");
     widget.parentUpdateFunction(words);
   }
 

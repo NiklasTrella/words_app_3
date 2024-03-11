@@ -73,7 +73,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 TextButton(
                   onPressed: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => ForgotPasswordPage()
+                    builder: (context) => const ForgotPasswordScreen()
                   )),
                   child: const Text("Forgot password")
                 )
@@ -94,15 +94,10 @@ class _AuthScreenState extends State<AuthScreen> {
             TextButton(
               child: const Text('Signup'),
               onPressed: () async {
-                bool userAlreadyExists = await UserDataService().checkUserExistence(emailController.text);
-                if(!userAlreadyExists) {
-
-                  // Odeslání uživatele na registrační stránku
-                  await Navigator.push(context, MaterialPageRoute(
+                await Navigator.push(context, MaterialPageRoute(
                     builder: (context) => SignUpScreen()
                   ));
-                  AuthService().signOut();
-                }
+                AuthService().signOut();
               },
             )
           ],

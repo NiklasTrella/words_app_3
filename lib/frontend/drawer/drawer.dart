@@ -37,42 +37,43 @@ class _MainScreenDrawerState extends State<MainScreenDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const DrawerHeader(
-                  child: Text('Menu')
-                ),
-
-                // Seznam kurzů
-                CoursesList(widget.updateCurrentCourseId),
-                
-                // Tlačítko na přidání kurzu
-                Visibility(
-                  visible: isTeacher,
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.add),
-                    label: const Text('Create a course'),
-                    onPressed: () async {
-                      await Navigator.pushNamed(context, '/create_course');
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                // Tlačítko na odhlášení z účtu
-                ElevatedButton(
-                  child: const Text('Sign out'),
-                  onPressed: () {
-                    AuthService().signOut();
-                    setState(() {});
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            // crossAxisAlignment: CrossAxisAlignment.stretch,
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisSize: MainAxisSize.min,
+            children: [
+              const DrawerHeader(
+                child: Text('Menu')
+              ),
+                  
+              // Seznam kurzů
+              CoursesList(widget.updateCurrentCourseId),
+              
+              // Tlačítko na přidání kurzu
+              Visibility(
+                visible: isTeacher,
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.add),
+                  label: const Text('Create a course'),
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/create_course');
                   },
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 10),
+                  
+              // Tlačítko na odhlášení z účtu
+              ElevatedButton(
+                child: const Text('Sign out'),
+                onPressed: () {
+                  AuthService().signOut();
+                  setState(() {});
+                },
+              ),
+            ],
           ),
         ),
       );

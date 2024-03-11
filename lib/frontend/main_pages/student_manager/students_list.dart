@@ -31,26 +31,28 @@ class _StudentsListState extends State<StudentsList> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
       shrinkWrap: true,
       itemCount: students.length,
       itemBuilder: (context, index) {
-
+    
         // Karta s daty studenta
         return Card(
           child: ListTile(
-
+    
             // Jméno
             title: Text("${students[index].firstName} ${students[index].lastName}"),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
+    
                 // Email
                 Text("Email: ${students[index].email}"),
                 
                 // Id
                 Text("Id: ${students[index].userId}"),
-
+    
                 // Informace, je-li student kurzu také učitelem
                 Visibility(
                   visible: students[index].isTeacher ?? false,
@@ -58,14 +60,14 @@ class _StudentsListState extends State<StudentsList> {
                 )
               ],
             ),
-
+    
             // Tlačítko pro odebrání studenta z kurzu
             trailing: IconButton(
               onPressed: () {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-
+    
                     // Potvrzení odebrání studenta
                     return AlertDialog(
                       title: const Text("Removal confirmation"),
@@ -79,7 +81,7 @@ class _StudentsListState extends State<StudentsList> {
                             setState(() {
                               students.removeAt(index);
                             });
-
+    
                             // Návrat na předchozí stránku
                             Navigator.of(context).pop();
                           },

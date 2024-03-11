@@ -32,6 +32,24 @@ class SystemDataService {
     return codeToCheck == correctCode;
   }
 
+  // Checkdomain
+  Future<bool> checkDomain(String domainCode) async {
+    CollectionReference domainsCollectionReference = system.doc("email_domains").collection("domains");
+    bool domainIsAllowed = false;
+
+    await domainsCollectionReference.get().then((QuerySnapshot querySnapshot) {
+      for (var document in querySnapshot.docs) {
+        if(domainCode == document.id) {
+          domainIsAllowed = true;
+          break;
+        }
+      }
+    });
+
+    print("Domain is allowed: $domainIsAllowed");
+    return domainIsAllowed;
+  }
+
   // Smazání dokumentu a celého jeho obsahu v databázi Firebase
   Future<void> deleteDocumentAndContents(DocumentReference documentReference, String parentCollection) async {    
     
@@ -44,12 +62,14 @@ class SystemDataService {
       querySnapshot.docs.forEach((element) {
         deleteDocumentAndContents(collectionReference.doc(element.id), "wordProgress");
       });
+      documentReference.delete();
     } else if (parentCollection == "courseProgress") {
       CollectionReference collectionReference = documentReference.collection("setProgress");
       QuerySnapshot querySnapshot= await collectionReference.get();
       querySnapshot.docs.forEach((element) {
         deleteDocumentAndContents(collectionReference.doc(element.id), "setProgress");
       });
+      documentReference.delete();
     } else if (parentCollection == "users") {
       CollectionReference collectionReference = documentReference.collection("courseProgress");
       QuerySnapshot querySnapshot = await collectionReference.get();
@@ -68,12 +88,14 @@ class SystemDataService {
       querySnapshot.docs.forEach((element) {
         deleteDocumentAndContents(collectionReference.doc(element.id), "words");
       });
+      documentReference.delete();
     } else if (parentCollection == "courses") {
       CollectionReference collectionReference = documentReference.collection("sets");
       QuerySnapshot querySnapshot = await collectionReference.get();
       querySnapshot.docs.forEach((element) {
         deleteDocumentAndContents(collectionReference.doc(element.id), "sets");
       });
+      documentReference.delete();
     }
   }
 }

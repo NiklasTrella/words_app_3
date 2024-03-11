@@ -1,7 +1,5 @@
 // Tento soubor obsahuje funkce pro přihlašování a autentikaci uživatelů v databázi Firebase Authentication
 
-import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:words_app_3/backend/data/users_database/user_data.dart';

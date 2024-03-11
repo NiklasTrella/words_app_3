@@ -36,13 +36,16 @@ class _CoursesListState extends State<CoursesList> {
       return const Center(child: CircularProgressIndicator());
     } else {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.start,
+        // mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 10.0),
           Text(ownCourses.isNotEmpty ? "Own courses" : ""),
           
           // Seznam vlastních kurzů
           ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: ownCourses.length,
             itemBuilder: (context, index) => CourseTile(ownCourses[index], widget.updateCurrentCourseId, parentSetState)
@@ -53,6 +56,7 @@ class _CoursesListState extends State<CoursesList> {
           
           // Seznam studovaných kurzů
           ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: studiedCourses.length,
             itemBuilder: (context, index) => CourseTile(studiedCourses[index], widget.updateCurrentCourseId, parentSetState)

@@ -7,15 +7,15 @@ import 'package:words_app_3/backend/data/users_database/progress_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
 // Stránka pro zobrazení postupu studentů
-class ProgressOverview extends StatefulWidget {
+class ProgressOverviewScreen extends StatefulWidget {
   final SetModel set;
-  const ProgressOverview(this.set, {super.key});
+  const ProgressOverviewScreen(this.set, {super.key});
 
   @override
-  State<ProgressOverview> createState() => _ProgressOverviewState();
+  State<ProgressOverviewScreen> createState() => _ProgressOverviewScreenState();
 }
 
-class _ProgressOverviewState extends State<ProgressOverview> {
+class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   List<UserModel> students = [];
   List<Map<String, int>> progress = [];
 
@@ -39,12 +39,13 @@ class _ProgressOverviewState extends State<ProgressOverview> {
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
+        child: ListView(
           children: [
             Text(widget.set.title ?? "No title"),
 
             // Seznam studentů
             ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: students.length,
               itemBuilder: (context, index) {

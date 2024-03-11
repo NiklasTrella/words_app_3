@@ -70,9 +70,9 @@ class SetDataService {
         ProgressDataService().deleteStudentsWordProgress(word.wordId, setModel.setId, setModel.courseId, null);
 
       } else {
-        WordModel wordToUpdate = wordsToUpdate.firstWhere((element) => element.wordId == word.wordId);
         // Zkontrolovat, jsou-li data identická
         // Pokud ne, spustí se následující if statement
+        WordModel wordToUpdate = wordsToUpdate.firstWhere((element) => element.wordId == word.wordId);
         if(!(word.original == wordToUpdate.original && word.translation == wordToUpdate.translation)) {
           WordDataService().addWord(setModel, wordToUpdate);
         }

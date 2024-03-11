@@ -36,21 +36,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Center(
-        child: Column(
+        child: ListView(
           children: [
-
             // Nadpis
-            const Text(
-              "Overview",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Divider(),
-            const SizedBox(height: 10),
-
             // FutureBuilder čeká na data → zobrazení
             FutureBuilder<String>(
               future: CourseDataService().getCourseTitleFuture(widget.courseId),
@@ -66,18 +54,27 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 } else {
 
                   // Zobrazení dat
-                  return Text(snapshot.data ?? "No data.");
+                  return Text(
+                    snapshot.data ?? "No data.",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold
+                    ),
+                  );
                 }
               }
             ),
 
             // Seznam setů
             SetsList(widget.courseId, widget.isAuthor),
+            const SizedBox(height: 10),
             
             // Tlačítko na přidání setu (zobrazí se pouze učiteli)
             widget.courseId != null ? Visibility(
               visible: isTeacher,
-              child: ElevatedButton(
+              child: OutlinedButton.icon(
+                label: const Text("Add set"),
+                icon: const Icon(Icons.add),
                 onPressed: () async {
                   
                   // Odeslání uživatele na stránku pro vytvoření nového setu
@@ -86,7 +83,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   ));
                   setState(() {});
                 },
-                child: const Text("Add set"),
               ),
             ) : Container(),
           ],

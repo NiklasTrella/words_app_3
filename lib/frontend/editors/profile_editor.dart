@@ -6,14 +6,14 @@ import 'package:words_app_3/backend/data/users_database/user_data.dart';
 import 'package:words_app_3/backend/system/models.dart';
 
 // Editor profilu
-class ProfileEditor extends StatefulWidget {
-  const ProfileEditor({super.key});
+class ProfileEditorScreen extends StatefulWidget {
+  const ProfileEditorScreen({super.key});
 
   @override
-  State<ProfileEditor> createState() => _ProfileEditorState();
+  State<ProfileEditorScreen> createState() => _ProfileEditorScreenState();
 }
 
-class _ProfileEditorState extends State<ProfileEditor> {
+class _ProfileEditorScreenState extends State<ProfileEditorScreen> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
 

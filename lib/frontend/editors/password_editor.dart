@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:words_app_3/backend/system/auth.dart';
 
 // Stránka s editorem hesla
-class PasswordEditor extends StatefulWidget {
-  const PasswordEditor({super.key});
+class PasswordEditorScreen extends StatefulWidget {
+  const PasswordEditorScreen({super.key});
 
   @override
-  State<PasswordEditor> createState() => _PasswordEditorState();
+  State<PasswordEditorScreen> createState() => _PasswordEditorScreenState();
 }
 
-class _PasswordEditorState extends State<PasswordEditor> {
+class _PasswordEditorScreenState extends State<PasswordEditorScreen> {
   TextEditingController firstPasswordController = TextEditingController(text: "");
   TextEditingController secondPasswordController = TextEditingController(text: "");
 

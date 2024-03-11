@@ -1,4 +1,4 @@
-// Tento soubor obsahuje Widget, který zobrazí seznam setů ve vybraném kurzu
+ // Tento soubor obsahuje Widget, který zobrazí seznam setů ve vybraném kurzu
 
 import 'package:flutter/material.dart';
 
@@ -54,7 +54,8 @@ class _SetsListState extends State<SetsList> {
                 result.add(SetTile(element, parentSetState, widget.isAuthor));
               }
               return ListView(
-                scrollDirection: Axis.vertical,
+                physics: const NeverScrollableScrollPhysics(),
+                // scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 children: result
               );
@@ -116,6 +117,7 @@ class _SetTileState extends State<SetTile> {
     return ListTile(
       title: Text(widget.set.title ?? "No title."),
       subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
           // Není-li uživatel autorem, zobrazení vlastního postupu
@@ -150,7 +152,8 @@ class _SetTileState extends State<SetTile> {
                   return const Text('Error loading data');
                 } else if(snapshot.hasData) {
                   if(snapshot.data != null) {
-                    return Text("Number of words: ${snapshot.data}");
+                    return Text(
+                      "Number of words: ${snapshot.data}");
                   }
                 }
                 else {
@@ -185,7 +188,7 @@ class _SetTileState extends State<SetTile> {
           Navigator.push(context, MaterialPageRoute(
 
             // Stránka s přehledem postupu studentů
-            builder: (context) => ProgressOverview(widget.set)
+            builder: (context) => ProgressOverviewScreen(widget.set)
           ));
         } else {
 

@@ -126,11 +126,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 }
               ).join();
 
-              // Registrace uživatele
-              await AuthService().signUp(email.text, randomPassword).then((value) async {
-                await UserDataService().addUser(value, firstName.text, lastName.text, codeIsCorrect, email.text);
-                Navigator.pop(context);
-              });
+              // Úprava emailu
+              email.text.trim().toLowerCase();
+
+              // Kontrola existence uživatele
+              bool userAlreadyExists = await UserDataService().checkUserExistence(email.text);
+
+              // Kontrola domény
+              bool allowedDomain = false;
+              List<String> emailParts = email.text.split("@");
+              if(emailParts.length == 2) {
+                allowedDomain = await SystemDataService().checkDomain(emailParts[1]);
+                print("Domain check.");
+              }
+
+              if(!userAlreadyExists && allowedDomain) {
+                // Registrace uživatele
+                await AuthService().signUp(email.text, randomPassword).then((value) async {
+                  await UserDataService().addUser(value, firstName.text, lastName.text, codeIsCorrect, email.text);
+                  Navigator.pop(context);
+                });
+              }
             },
             child: const Text("Sign up")
           )

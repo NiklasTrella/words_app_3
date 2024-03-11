@@ -85,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             OutlinedButton.icon(
                               onPressed: () async {
                                 await Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => const ProfileEditor(),
+                                  builder: (context) => const ProfileEditorScreen(),
                                 ));
                                 setState(() {});
                               },
@@ -146,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         OutlinedButton.icon(
                           onPressed: () async {
                             await Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => const PasswordEditor(),
+                              builder: (context) => const PasswordEditorScreen(),
                             ));
                             setState(() {});
                           },

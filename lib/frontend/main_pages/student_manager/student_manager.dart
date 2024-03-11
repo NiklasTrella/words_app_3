@@ -22,21 +22,8 @@ class _StudentManagerScreenState extends State<StudentManagerScreen> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      child: Column(
+      child: ListView(
         children: [
-
-          // Nadpis
-          const Text(
-            "Student manager",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Divider(),
-          const SizedBox(height: 10),
-
           // Název kurzu
           FutureBuilder<String>(
             future: CourseDataService().getCourseTitleFuture(widget.courseId),
@@ -46,7 +33,13 @@ class _StudentManagerScreenState extends State<StudentManagerScreen> {
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return Text(snapshot.data ?? "No data.");
+                return Text(
+                  snapshot.data ?? "No data.",
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold
+                  ),
+                );
               }
             }
           ),
@@ -57,11 +50,11 @@ class _StudentManagerScreenState extends State<StudentManagerScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 10),
-
+            
                 // Seznam studentů
                 StudentsList(widget.courseId),
                 const SizedBox(height: 10),
-
+            
                 // Stránka na přidávání studentů
                 OutlinedButton.icon(
                   onPressed: () {

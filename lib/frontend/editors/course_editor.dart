@@ -78,18 +78,18 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
                         actions: [
                           TextButton.icon(
                             icon: const Icon(Icons.done),
-                            onPressed: () {
-                              CourseDataService().deleteCourse(widget.course.courseId!);
+                            onPressed: () async {
+                              await CourseDataService().deleteCourse(widget.course.courseId!);
                               widget.parentSetState!();
+                              Navigator.pop(context);
                               popContext();
-                              Navigator.of(context).pop();
                             },
                             label: const Text("Yes."),
                           ),
                           TextButton.icon(
                             icon: const Icon(Icons.close),
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.pop(context);
                             },
                             label: const Text("No.")
                           )
@@ -108,6 +108,6 @@ class _CourseEditorScreenState extends State<CourseEditorScreen> {
   }
 
   void popContext() {
-    Navigator.of(context).pop();
+    Navigator.pop(context);
   }
 }
