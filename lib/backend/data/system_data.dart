@@ -32,7 +32,7 @@ class SystemDataService {
     return codeToCheck == correctCode;
   }
 
-  // Checkdomain
+  // Kontrola domény
   Future<bool> checkDomain(String domainCode) async {
     CollectionReference domainsCollectionReference = system.doc("email_domains").collection("domains");
     bool domainIsAllowed = false;
